@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +8,28 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        figure {
+            margin: 0;
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-style: italic;
+            color: #555;
+        }
+
+        h2, h3 {
+            margin-top: 40px;
         }
     </style>
 </head>
@@ -17,10 +39,115 @@
     <p>
         I am given a collection of 3 black-and-white images, corresponding with pixel-values of 
         RGB of a complete image. In this project, I align the 3 images with one another to produce 
-        a colored image. Blurriness in the images indicate poor alignment.
+        a colored image. Blurriness in the images indicates poor alignment.
     </p>
 
-    <img src="Images/tobolsk.jpg" alt="Example of given, RGB-separated image.">
+    <img src="../Images/tobolsk.jpg" alt="Tobolsk separated" width="200" height="600">
+    <p>
+        Example of given, RGB-separated image. Top is b, middle is g, bottom is r.        
+    </p>
 
+    <h2>Methods to Combine the Images</h2>
+
+    <p>
+        The images were separated into their RGB components in place. Image alignment was done brute force, then with a coarse-to-fine pyramid speedup.
+    </p>
+
+    <h3>Brute Force Approach</h3>
+
+    <p>
+        I experimented with Cross Correlation and Euclidean Distance to score image alignments. Normalized Cross Correlation (NCC) produced the most consistent results for me.
+        I measured image alignments in a [-15, 15] window. To create sensible alignments, I cropped a border of 15 pixels width around the image channels before calculating NCC score.
+        The alignment with the highest score was used. I used np.roll to realign two channels to match the third channel (generally, g and r were realigned to match b).
+    </p>
+
+    <div class="container">
+        <figure>
+            <img src="../Images/unaligned_ex.png" alt="Tobolsk unaligned" width="200" height="200">
+            <figcaption>Image overlay with no alignment.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="../Images/out_tobolsk.jpg" alt="Tobolsk aligned" width="200" height="200">
+            <figcaption>Post alignment: Displacement of green channel: (2, 3), red channel: (3, 6)</figcaption>
+        </figure>
+    </div>
+
+    <h3>Coarse-to-Fine Pyramid Speedup</h3>
+
+    <p>
+        For larger images, I used the same function to find proper alignment as I did in the brute force approach.
+        This time, I applied the alignment in multiple functions. 
+        I downsized the images using cv2's resize function. The factor of this resize (downsize) was the first 2^n to bring the image to have vertical dimension below 600.
+        I made a single alignment of the smallest image of my pyramid in the range [-20, 20]. Then, I repeatedly aligned subsequent pyramid images (larger by factors of 2 up to the original image) up to 2 (pseudo-)pixels in the horizontal and vertical directions.
+    </p>
+
+    <div class="container">
+        <figure>
+            <img src="../Images/out_lady.jpg" alt="Large image example" width="200" height="200">
+            <figcaption>Post alignment: Displacement of green channel: (-22, 48), red channel: (-30, 94)</figcaption>
+        </figure>
+    </div>
+
+    <h2>Further Images</h2>
+
+    <h3>Small (jpg)</h3>
+    <div class="container">
+        <figure>
+            <img src="../Images/out_cathedral.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (2, 5), red channel: (3, 12)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_monastery.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (2, -3), red channel: (2, 3)</figcaption>
+        </figure>
+    </div>
+
+    <h3>Large (tif)</h3>
+
+    <p>Some of the images shown used alignment on the green channel instead of alignment on the blue channel.</p>
+
+    <div class="container">
+        <figure>
+            <img src="../Images/out_church.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (-22, 48), red channel: (-30, 94)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_emir.jpg" width="200" height="200">
+            <figcaption>Displacement of blue channel: (-38, -62), red channel: (30, 70)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_harvesters.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (6, 70), red channel: (4, 132)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_icon.jpg" width="200" height="200">
+            <figcaption>Displacement of blue channel: (-26, -54), red channel: (16, 62)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_melons.jpg" width="200" height="200">
+            <figcaption>Displacement of blue channel: (2, -94), red channel: (-10, 110)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_onion_church.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (24, 46), red channel: (39, 118)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_sculpture.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (-22, 46), red channel: (-32, 150)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_onion_church.jpg" width="200" height="200">
+            <figcaption>Displacement of blue channel: (-24, -94), red channel: (0, 110)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_three_generations.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (17, 70), red channel: (16, 126)</figcaption>
+        </figure>
+        <figure>
+            <img src="../Images/out_train.jpg" width="200" height="200">
+            <figcaption>Displacement of green channel: (-10, 154), red channel: (28, 102)</figcaption>
+        </figure>
+    </div>
 </body>
 </html>
