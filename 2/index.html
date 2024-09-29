@@ -1,662 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Project 2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun with Filters and Frequencies!</title>
     <style>
-        /* General body styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-            color: #333;
             line-height: 1.6;
-        }
-
-        /* Container for the main content */
-        .container {
+            color: #333;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f4f4f4;
         }
-
-        /* Styling for headings */
         h1 {
-            text-align: center;
-            color: #333;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
             margin-bottom: 20px;
-            font-size: 2.5em;
-            letter-spacing: -1px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        h2, h3 {
-            margin-top: 40px;
-            color: #555;
-            border-bottom: 2px solid #e2e2e2;
-            padding-bottom: 5px;
-        }
-
-        /* Styling for paragraphs */
-        p {
-            margin: 20px 0;
-            font-size: 1.1em;
-            color: #666;
-            text-align: justify;
-        }
-
-        /* Styling for images */
-        img {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-        }
-
-        /* Styling for image captions */
-        .caption {
-            text-align: center;
-            font-style: italic;
-            color: #777;
-            margin-top: 8px;
-        }
-
-        /* Grid layout for image sections */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin: 20px 0;
+            margin-top: 20px;
         }
-
-        /* Footer style */
-        footer {
-            margin-top: 40px;
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        figure {
+            margin: 0;
             text-align: center;
-            font-size: 0.9em;
-            color: #aaa;
+        }
+        figcaption {
+            font-style: italic;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Fun with Filters and Frequencies!</h1>
-
-        <p>
-            <strong>1.1: Finite Difference Operator</strong><br>
-            The gradient of my image I computed by convolving with the Dx and Dy operators, respectively. 
-            I was able to compute the magnitude by taking the RMS of the two resulting derivatives: 
-            <code>np.sqrt(dx_im**2 + dy_im**2)</code>.
-        </p>
-
+        
+        <h2>1.1: Finite Difference Operator</h2>
+        <p>The gradient of my image I computed by convolving with the Dx and Dy operators, respectively. I was able to compute the magnitude by taking the RMS of the two resulting derivatives: <code>np.sqrt(dx_im**2 + dy_im**2)</code>.</p>
+        
         <div class="grid">
-            <figure>
-                <img src="../Images2/1.1/original.png" alt="Original Image">
-                <figcaption class="caption">Original Image</figcaption>
-            </figure>
-            <figure>
-                <img src="../Images2/1.1/Dx.png" alt="Dx of Image">
-                <figcaption class="caption">Dx of Image</figcaption>
-            </figure>
-            <figure>
-                <img src="../Images2/1.1/Dy.png" alt="Dy of Image">
-                <figcaption class="caption">Dy of Image</figcaption>
-            </figure>
-            <figure>
-                <img src="../Images2/1.1/Dim.png" alt="Gradient of Image">
-                <figcaption class="caption">Gradient of Image</figcaption>
-            </figure>
+            <img src="../Images2/1.1/original.png" alt="Original Image">
+            <img src="../Images2/1.1/Dx.png" alt="Dx of Image">
+            <img src="../Images2/1.1/Dy.png" alt="Dy of Image">
+            <img src="../Images2/1.1/Dim.png" alt="Gradient of Image">
             <figure>
                 <img src="../Images2/1.1/boundary.png" alt="Boundary of Image">
-                <figcaption class="caption">Boundary of Image (pixel values &gt; 65)</figcaption>
+                <figcaption>Boundary of Image (pixel values > 65)</figcaption>
             </figure>
         </div>
-
-        <p>
-            <strong>1.2: Derivative of Gaussian (DoG) Filter</strong><br>
-            Below are images showing the results of applying the Derivative of Gaussian filter. 
-            Combining the Gaussian convolution operator with the differential operator yields the same result.
-        </p>
-
+        
+        <h2>1.2: Derivative of Gaussian (DoG) Filter</h2>
+        <p>Below are images showing the results of applying the Derivative of Gaussian filter. Combining the Gaussian convolution operator with the differential operator yields the same result.</p>
+        
+        <div class="grid">
+            <img src="../Images2/1.2/Dx.png" alt="Dx of Image">
+            <img src="../Images2/1.2/Dy.png" alt="Dy of Image">
+            <img src="../Images2/1.2/gradient.png" alt="Gradient of Image">
+            <img src="../Images2/1.2/boundary.png" alt="Boundary of Image">
+        </div>
+        
+        <p>Upon smoothing the image prior to convolving it with the derivative operators, I observe that the boundary is far more well defined. It's thicker and smoother. Below, we see that combining the Gaussian convolution operator with the differential operator yields the same result.</p>
+        
+        <div class="grid">
+            <img src="../Images2/1.2/Dx.png" alt="Dx of Image">
+            <img src="../Images2/1.2/Dy.png" alt="Dy of Image">
+            <img src="../Images2/1.2/gradient.png" alt="Gradient of Image">
+            <img src="../Images2/1.2/boundary.png" alt="Boundary of Image">
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>2.1: Image Sharpening</h2>
+        <p>The image sharpening was quite interesting and fun! I used a single filter for my sharpening: <code>unsharp_mask_filter = (1+alpha)*impulse - alpha*kernel_3d</code>.</p>
+        
+        <h3>Progression of Taj Mahal sharpening:</h3>
+        <div class="grid">
+            <img src="../Images2/2.1/original.png" alt="Original Image">
+            <figure>
+                <img src="../Images2/2.1/normalization.png" alt="Normalization Error">
+                <figcaption>Initially, I made the error of normalizing my result instead of clipping, resulting in discoloration.</figcaption>
+            </figure>
+        </div>
+        
+        <h3>Progression of Taj Sharpening with different alpha values:</h3>
         <div class="grid">
             <figure>
-                <img src="../Images2/1.2/Dx.png" alt="Dx of Image">
-                <figcaption class="caption">Dx of Image</figcaption>
+                <img src="../Images2/2.1/alpha1.png" alt="Alpha 1">
+                <figcaption>alpha = 1</figcaption>
             </figure>
             <figure>
-                <img src="../Images2/1.2/Dy.png" alt="Dy of Image">
-                <figcaption class="caption">Dy of Image</figcaption>
+                <img src="../Images2/2.1/alpha2.png" alt="Alpha 2">
+                <figcaption>alpha = 2</figcaption>
             </figure>
             <figure>
-                <img src="../Images2/1.2/gradient.png" alt="Gradient of Image">
-                <figcaption class="caption">Gradient of Image</figcaption>
-            </figure>
-            <figure>
-                <img src="../Images2/1.2/boundary.png" alt="Boundary of Image">
-                <figcaption class="caption">Boundary of Image</figcaption>
+                <img src="../Images2/2.1/alpha5.png" alt="Alpha 5">
+                <figcaption>alpha = 5</figcaption>
             </figure>
         </div>
-
-        <p>
-            Upon smoothing the image prior to convolving it with the derivative operators, I observe that the boundary is far more well defined. 
-            It's thicker and smoother. Below, we see that combining the Gaussian convolution operator with the differential operator yields the same result.
-        </p>
-
+        
+        <p>Next, I tried sharpening with an image of my own. I was finding the best results with alpha = 5.</p>
+        
         <div class="grid">
             <figure>
-                <img src="../Images2/1.2/Dx.png" alt="Dx of Image">
-                <figcaption class="caption">Dx of Image</figcaption>
+                <img src="../Images2/2.1/cupcake.png" alt="Cupcake">
+                <figcaption>Original Cupcake</figcaption>
+            </figure>
+            <img src="../Images2/2.1/sharp_cupcake.png" alt="Sharpened Cupcake">
+        </div>
+        
+        <p>As a final experiment, I used an already sharp image, blurred it with a Gaussian filter, and resharpened. Here's my result!</p>
+        
+        <div class="grid">
+            <img src="../Images2/2.1/burger.png" alt="Original Burger">
+            <img src="../Images2/2.1/blurred.png" alt="Blurred Burger">
+            <img src="../Images2/2.1/resharp.png" alt="Resharpened Burger">
+        </div>
+        
+        <p>Resharpened burger: actually turned out better than what I had initially! Again, alpha = 5.</p>
+    </div>
+    
+    <div class="container">
+        <h2>2.2: Hybrid Images</h2>
+        <p>For me, this was the most challenging portion of the project.</p>
+        
+        <p>First, I made a hybrid image from Derek and Nutmeg.</p>
+        
+        <div class="grid">
+            <img src="../Images2/2.2/Derek.jpg" alt="Derek">
+            <img src="../Images2/2.2/nutmeg.jpg" alt="Nutmeg">
+            <figure>
+                <img src="../Images2/2.2/colored.png" alt="Hybrid Colored">
+                <figcaption>Hybrid Image (Colored)</figcaption>
             </figure>
             <figure>
-                <img src="../Images2/1.2/Dy.png" alt="Dy of Image">
-                <figcaption class="caption">Dy of Image</figcaption>
-            </figure>
-            <figure>
-                <img src="../Images2/1.2/gradient.png" alt="Gradient of Image">
-                <figcaption class="caption">Gradient of Image</figcaption>
-            </figure>
-            <figure>
-                <img src="../Images2/1.2/boundary.png" alt="Boundary of Image">
-                <figcaption class="caption">Boundary of Image</figcaption>
+                <img src="../Images2/2.2/black_and_white.png" alt="Hybrid B&W">
+                <figcaption>Hybrid Image (B&W)</figcaption>
             </figure>
         </div>
-
-
+        
+        <h3>Fourier Analysis:</h3>
+        <div class="grid">
+            <img src="../Images2/2.2/man.png" alt="Man Frequency">
+            <img src="../Images2/2.2/cat.png" alt="Cat Frequency">
+        </div>
+        
+        <div class="grid">
+            <img src="../Images2/2.2/bman.png" alt="LPF Man">
+            <p>As expected, several high frequencies are filtered.</p>
+            <img src="../Images2/2.2/scat.png" alt="Band Limited Cat">
+            <img src="../Images2/2.2/hybrid.png" alt="Hybrid Image">
+        </div>
+        
+        <h3>More hybrid images (first is a failure):</h3>
+        <div class="grid">
+            <img src="../Images2/2.2/sponge.png" alt="Sponge">
+            <img src="../Images2/2.2/jerry.png" alt="Jerry">
+            <img src="../Images2/2.2/serry.png" alt="Serry">
+        </div>
+        
+        <div class="grid">
+            <img src="../Images2/2.2/tiger.png" alt="Tiger">
+            <img src="../Images2/2.2/ephant.png" alt="Elephant">
+            <img src="../Images2/2.2/eiger.png" alt="Eiger">
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>2.3: Gaussian and Laplacian Splits</h2>
+        <p>Multiresolution blending was my favorite part of this project! Here, I got some of the most rewarding results. First, let's take a look at the Gaussian and Laplacian stacks of the two images to blend: apple and orange.</p>
+        
+        <p>The stacks were 8 long, for clarity I'm only showing 5 elements: 1, 3, 5, 7, 8.</p>
+        
+        <h3>Apple gaussian:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/ag1.png" alt="Apple Gaussian 1">
+            <img src="../Images2/2.3/ag3.png" alt="Apple Gaussian 3">
+            <img src="../Images2/2.3/ag5.png" alt="Apple Gaussian 5">
+            <img src="../Images2/2.3/ag7.png" alt="Apple Gaussian 7">
+            <img src="../Images2/2.3/ag8.png" alt="Apple Gaussian 8">
+        </div>
+        
+        <h3>Orange gaussian:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/og1.png" alt="Orange Gaussian 1">
+            <img src="../Images2/2.3/og3.png" alt="Orange Gaussian 3">
+            <img src="../Images2/2.3/og5.png" alt="Orange Gaussian 5">
+            <img src="../Images2/2.3/og7.png" alt="Orange Gaussian 7">
+            <img src="../Images2/2.3/og8.png" alt="Orange Gaussian 8">
+        </div>
+        
+        <h3>Apple laplace:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/al1.png" alt="Apple Laplace 1">
+            <img src="../Images2/2.3/al3.png" alt="Apple Laplace 3">
+            <img src="../Images2/2.3/al5.png" alt="Apple Laplace 5">
+            <img src="../Images2/2.3/al7.png" alt="Apple Laplace 7">
+            <img src="../Images2/2.3/al8.png" alt="Apple Laplace 8">
+        </div>
+        
+        <h3>Orange laplace:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/ol1.png" alt="Orange Laplace 1">
+            <img src="../Images2/2.3/ol3.png" alt="Orange Laplace 3">
+            <img src="../Images2/2.3/ol5.png" alt="Orange Laplace 5">
+            <img src="../Images2/2.3/ol7.png" alt="Orange Laplace 7">
+            <img src="../Images2/2.3/ol8.png" alt="Orange Laplace 8">
+        </div>
+        
+        <p>Next, I used a left-right divided mask to blend the two images. Gaussian kernels were used to blend the mask 8 times, each blend for the next element in the Laplacian stack. Shown is the 8th mask blend.</p>
+        
+        <img src="../Images2/2.3/mask8.png" alt="8th Mask Blend">
+        
+        <p>Below are the laplacian stacks that resulted from masking. Elements 0, 2, 4, and the sum of all 8 elements are shown.</p>
+        
+        <h3>Apple:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/all0.png" alt="Apple Laplacian 0">
+            <img src="../Images2/2.3/all2.png" alt="Apple Laplacian 2">
+            <img src="../Images2/2.3/all4.png" alt="Apple Laplacian 4">
+            <img src="../Images2/2.3/all8.png" alt="Apple Laplacian Sum">
+        </div>
+        
+        <h3>Orange:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/all0.png" alt="Orange Laplacian 0">
+            <img src="../Images2/2.3/oll2.png" alt="Orange Laplacian 2">
+            <img src="../Images2/2.3/oll4.png" alt="Orange Laplacian 4">
+            <img src="../Images2/2.3/oll8.png" alt="Orange Laplacian Sum">
+        </div>
+        
+        <h3>Blended:</h3>
+        <div class="grid">
+            <img src="../Images2/2.3/bl0.png" alt="Blended Laplacian 0">
+            <img src="../Images2/2.3/bl2.png" alt="Blended Laplacian 2">
+            <img src="../Images2/2.3/bl4.png" alt="Blended Laplacian 4">
+            <img src="../Images2/2.3/bl8.png" alt="Blended Laplacian Sum">
+        </div>
+        
+        <p>Here was my final result:</p>
+        <img src="../Images2/2.3/hybrid.png" alt="Final Hybrid Image">
+    </div>
+    
+    <div class="container">
+        <h2>2.4: Multiresolution Blending</h2>
+        <p>In this section are some of the other blending examples I tried.</p>
+        
+        <p>First, I did a vertical line blend between a tiger and a lion.</p>
+        
+        <h3>Initial images:</h3>
+        <div class="grid">
+            <img src="../Images2/2.4/tiger.png" alt="Tiger">
+            <img src="../Images2/2.4/elephant.jpeg" alt="Elephant">
+        </div>
+        
+        <h3>Vertical blend:</h3>
+        <figure>
+            <img src="../Images2/2.4/vb.png" alt="Vertical Blend">
+        </figure>
+        <p>The images are certainly quite different, thus the boundary (though blended alright) is clear.</p>
+        
+        <p>Then, for my obscure-mask blend, I decided to use the same two images! However, now I'm trying to incorporate the elephant's trunk with the tiger's face.</p>
+        <figure>
+            <img src="../Images2/2.4/ab.png" alt="Obscure-mask Blend">
+        </figure>
+        <p>Here, my primary issue was that the gaussian mask had a sigma a bit too high (or so I thought). When I tried to lower sigma, I was unable to fix this issue. Therefore, the lion was left with a trunk that's leaking gray onto its face a bit.</p>
+        
+        <p>Overall, the blends turned out okay!</p>
+        
+        <p>Here are the laplacian stacks for the tiger (row 1), elephant (row 2), and hybrid image (row 3). The final column is the normalized sum of the laplacian stacks.</p>
+        
+        <h3>Tiger Laplacian Stack:</h3>
+        <div class="grid">
+            <figure>
+                <img src="../Images2/2.4/tl0.png" alt="Tiger Laplacian 0">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/tl2.png" alt="Tiger Laplacian 2">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/tl4.png" alt="Tiger Laplacian 4">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/tl8.png" alt="Tiger Laplacian Sum">
+            </figure>
+        </div>
+        
+        <h3>Elephant Laplacian Stack:</h3>
+        <div class="grid">
+            <figure>
+                <img src="../Images2/2.4/el0.png" alt="Elephant Laplacian 0">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/el2.png" alt="Elephant Laplacian 2">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/el4.png" alt="Elephant Laplacian 4">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/el8.png" alt="Elephant Laplacian Sum">
+            </figure>
+        </div>
+        
+        <h3>Hybrid Image Laplacian Stack:</h3>
+        <div class="grid">
+            <figure>
+                <img src="../Images2/2.4/b0.png" alt="Hybrid Laplacian 0">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/b2.png" alt="Hybrid Laplacian 2">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/b4.png" alt="Hybrid Laplacian 4">
+            </figure>
+            <figure>
+                <img src="../Images2/2.4/b8.png" alt="Hybrid Laplacian Sum">
+            </figure>
+        </div>
     </div>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Project 2</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f5f5f5;
-                margin: 0;
-                padding: 20px;
-                color: #333;
-                line-height: 1.6;
-            }
-    
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
-                background-color: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-    
-            h1 {
-                text-align: center;
-                color: #333;
-                margin-bottom: 20px;
-                font-size: 2.5em;
-                letter-spacing: -1px;
-            }
-    
-            h2, h3 {
-                margin-top: 40px;
-                color: #555;
-                border-bottom: 2px solid #e2e2e2;
-                padding-bottom: 5px;
-            }
-    
-            p {
-                margin: 20px 0;
-                font-size: 1.1em;
-                color: #666;
-                text-align: justify;
-            }
-    
-            img {
-                width: 100%;
-                max-width: 400px;
-                height: auto;
-                display: block;
-                margin: 10px auto;
-                border-radius: 10px;
-                border: 1px solid #e0e0e0;
-            }
-    
-            .caption {
-                text-align: center;
-                font-style: italic;
-                color: #777;
-                margin-top: 8px;
-            }
-    
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin: 20px 0;
-            }
-    
-            .grid img {
-                width: 100%;
-                max-width: 100%;
-            }
-    
-            .image-group {
-                margin: 30px 0;
-            }
-    
-            footer {
-                margin-top: 40px;
-                text-align: center;
-                font-size: 0.9em;
-                color: #aaa;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Fun with Filters and Frequencies!</h1>
-    
-            <p>
-                <strong>2.1: Image Sharpening</strong><br>
-                The image sharpening was quite interesting and fun! I used a single filter for my sharpening: 
-                <code>unsharp_mask_filter = (1+alpha)*impulse - alpha*kernel_3d</code>.
-            </p>
-            
-            <p>Progression of Taj Mahal sharpening:</p>
-            
-            <div class="image-group">
-                <figure>
-                    <img src="../Images2/2.1/original.png" alt="Original Image">
-                    <figcaption class="caption">Original Image</figcaption>
-                </figure>
-                <p>
-                    Initially, I made the error of normalizing my result instead of clipping, resulting in discoloration.
-                </p>
-                <figure>
-                    <img src="../Images2/2.1/normalization.png" alt="Normalization Error">
-                    <figcaption class="caption">Normalization Error</figcaption>
-                </figure>
-            </div>
-    
-            <p>Progression of Taj Sharpening with different alpha values:</p>
-            
-            <div class="grid">
-                <figure>
-                    <img src="../Images2/2.1/alpha1.png" alt="Alpha 1">
-                    <figcaption class="caption">alpha = 1</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.1/alpha2.png" alt="Alpha 2">
-                    <figcaption class="caption">alpha = 2</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.1/alpha5.png" alt="Alpha 5">
-                    <figcaption class="caption">alpha = 5</figcaption>
-                </figure>
-            </div>
-    
-            <p>
-                Next, I tried sharpening with an image of my own. I was finding the best results with alpha = 5.
-            </p>
-            
-            <div class="grid">
-                <figure>
-                    <img src="../Images2/2.1/cupcake.png" alt="Cupcake">
-                    <figcaption class="caption">Original Cupcake</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.1/sharp_cupcake.png" alt="Sharpened Cupcake">
-                    <figcaption class="caption">Sharpened Cupcake</figcaption>
-                </figure>
-            </div>
-    
-            <p>
-                As a final experiment, I used an already sharp image, blurred it with a Gaussian filter, and resharpened. Here's my result!
-            </p>
-    
-            <div class="grid">
-                <figure>
-                    <img src="../Images2/2.1/burger.png" alt="Original Burger">
-                    <figcaption class="caption">Original Burger</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.1/blurred.png" alt="Blurred Burger">
-                    <figcaption class="caption">Blurred Burger</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.1/resharp.png" alt="Resharpened Burger">
-                    <figcaption class="caption">Resharpened Burger</figcaption>
-                </figure>
-            </div>
-            <p>
-                Resharpened burger: actually turned out better than what I had initially! Again, alpha = 5.
-            </p>
-    
-            <p>
-                <strong>2.2: Hybrid Images</strong><br>
-                For me, this was the most challenging portion of the project.
-            </p>
-            
-            <p>
-                First, I made a hybrid image from Derek and Nutmeg.
-            </p>
-            
-            <div class="grid">
-                <figure>
-                    <img src="../Images2/2.2/Derek.jpg" alt="Derek">
-                    <figcaption class="caption">Derek</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.2/nutmeg.jpg" alt="Nutmeg">
-                    <figcaption class="caption">Nutmeg</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.2/colored.png" alt="Hybrid Colored">
-                    <figcaption class="caption">Hybrid Image (Colored)</figcaption>
-                </figure>
-                <figure>
-                    <img src="../Images2/2.2/black_and_white.png" alt="Hybrid B&W">
-                    <figcaption class="caption">Hybrid Image (B&W)</figcaption>
-                </figure>
-            </div>
-    
-            <p>Fourier Analysis:</p>
-
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.2/man.png" alt="Man Frequency">
-        <figcaption class="caption">Man Frequency</figcaption>
-    </figure>
-    
-    <figure>
-        <img src="../Images2/2.2/cat.png" alt="Cat Frequency">
-        <figcaption class="caption">Cat Frequency</figcaption>
-    </figure>
-</div>
-
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.2/bman.png" alt="LPF Man">
-        <figcaption class="caption">LPF Man</figcaption>
-    </figure>
-    <p>As expected, several high frequencies are filtered.</p>
-    
-    <figure>
-        <img src="../Images2/2.2/scat.png" alt="Band Limited Cat">
-        <figcaption class="caption">Band Limited Cat</figcaption>
-    </figure>
-
-    <figure>
-        <img src="../Images2/2.2/hybrid.png" alt="Hybrid Image">
-        <figcaption class="caption">Hybrid Image</figcaption>
-    </figure>
-</div>
-    
-<p>More hybrid images (first is a failure):</p>
-
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.2/sponge.png" alt="Sponge">
-        <figcaption class="caption">Sponge</figcaption>
-    </figure>
-    <figure>
-        <img src="../Images2/2.2/jerry.png" alt="Jerry">
-        <figcaption class="caption">Jerry</figcaption>
-    </figure>
-    <figure>
-        <img src="../Images2/2.2/serry.png" alt="Serry">
-        <figcaption class="caption">Serry</figcaption>
-    </figure>
-</div>
-
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.2/tiger.png" alt="Tiger">
-        <figcaption class="caption">Tiger</figcaption>
-    </figure>
-    <figure>
-        <img src="../Images2/2.2/ephant.png" alt="Elephant">
-        <figcaption class="caption">Elephant</figcaption>
-    </figure>
-    <figure>
-        <img src="../Images2/2.2/eiger.png" alt="Eiger">
-        <figcaption class="caption">Eiger</figcaption>
-    </figure>
-</div>
-
-<p>
-    <strong>2.3: Gaussian and Laplacian Splits</strong><br>
-</p>
-<p>
-    Multiresolution blending was my favorite part of this project! Here, I got some of the most rewarding results. First, let's take a look at the Gaussian and Laplacian stacks of the two images to blend: apple and orange.
-</p>
-<p>
-    The stacks were 8 long, for clarity I'm only showing 5 elements: 1, 3, 5, 7, 8.
-</p>
-<p>
-    Apple gaussian:
-</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.3/ag1.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ag3.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ag5.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ag7.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ag8.png">
-    </figure>
-</div>
-<p>
-    Orange gaussian:
-</p>
-<div class="grid"></div>
-    <figure>
-        <img src="../Images2/2.3/og1.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/og3.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/og5.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/og7.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/og8.png">
-    </figure>
-</div>
-<p>
-    Apple laplace:
-</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.3/al1.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/al3.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/al5.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/al7.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/al8.png">
-    </figure>
-</div>
-<p>
-    Orange laplace:
-</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.3/ol1.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ol3.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ol5.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ol7.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/ol8.png">
-    </figure>
-</div>
-<p>
-    Next, I used a left-right divided mask to blend the two images. Gaussian kernels were used to blend the mask 8 times, each blend for the next element in the Laplacian stack. Shown is the 8th mask blend.
-</p>
-<figure>
-    <img src="../Images2/2.3/mask8.png">
-</figure>
-<p>
-    Below are the laplacian stacks that resulted from masking. Elements 0, 2, 4, and the sum of all 8 elements are shown.
-</p>
-<p>
-    Apple:
-</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.3/all0.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/all2.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/all4.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/all8.png">
-    </figure>
-</div>
-<p>
-    Orange:
-</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.3/all0.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/oll2.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/oll4.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/oll8.png">
-    </figure>
-</div>
-<p>
-    Blended:
-</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.3/bl0.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/bl2.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/bl4.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.3/bl8.png">
-    </figure>
-</div>
-<p>
-    Here was my final result:
-</p>
-<figure>
-    <img src="../Images2/2.3/hybrid.png">
-</figure>
-
-<p>
-    <strong>2.4: Multiresolution Blending</strong><br>
-</p>
-<p>In this section are some of the other blending examples I tried.</p>
-<p>First, I did a vertical line blend between a tiger and a lion.</p>
-<p>Initial images:</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.4/tiger.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/elephant.jpeg">
-    </figure>
-</div>
-<p>Vertical blend:</p>
-<figure>
-    <img src="../Images2/2.4/vb.png">
-</figure>
-<p>The images are certainly quite different, thus the boundary (though blended alright) is clear.</p>
-<p>Then, for my obscure-mask blend, I decided to use the same two images! However, now I'm trying to incorporate the elephant's trunk with the tiger's face.</p>
-<figure>
-    <img src="../Images2/2.4/ab.png">
-</figure>
-<p>Here, my primary issue was that the gaussian mask had a sigma a bit too high (or so I thought). When I tried to lower sigma, I was unable to fix this issue. Therefore, the lion was left with a trunk that's leaking gray onto its face a bit.</p>
-<p> Overall, the blends turned out okay!</p>
-<p> Here are the laplacian stacks for the tiger (row 1), elephant (row 2), and hybrid image (row 3). The final column is the normalized sum of the laplacian stacks.</p>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.4/tl0.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/tl2.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/tl4.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/tl8.png">
-    </figure>
-</div>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.4/el0.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/el2.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/el4.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/el8.png">
-    </figure>
-</div>
-<div class="grid">
-    <figure>
-        <img src="../Images2/2.4/b0.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/b2.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/b4.png">
-    </figure>
-    <figure>
-        <img src="../Images2/2.4/b8.png">
-    </figure>
-</div>
     <footer>
         &copy; 2024 Project 2 - Fun with Filters and Frequencies
     </footer>
 </body>
 </html>
+
