@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project 2</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Container for the main content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling for headings */
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            letter-spacing: -1px;
+        }
+
+        h2, h3 {
+            margin-top: 40px;
+            color: #555;
+            border-bottom: 2px solid #e2e2e2;
+            padding-bottom: 5px;
+        }
+
+        /* Styling for paragraphs */
+        p {
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #666;
+            text-align: justify;
+        }
+
+        /* Styling for images */
+        img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Styling for image captions */
+        .caption {
+            text-align: center;
+            font-style: italic;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        /* Grid layout for image sections */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        /* Footer style */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fun with Filters and Frequencies!</h1>
+
+        <p>
+            <strong>1.1: Finite Difference Operator</strong><br>
+            The gradient of my image I computed by convolving with the Dx and Dy operators, respectively. 
+            I was able to compute the magnitude by taking the RMS of the two resulting derivatives: 
+            <code>np.sqrt(dx_im**2 + dy_im**2)</code>.
+        </p>
+
+        <div class="grid">
+            <figure>
+                <img src="../Images2/1.1/original.png" alt="Original Image">
+                <figcaption class="caption">Original Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.1/Dx.png" alt="Dx of Image">
+                <figcaption class="caption">Dx of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.1/Dy.png" alt="Dy of Image">
+                <figcaption class="caption">Dy of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.1/Dim.png" alt="Gradient of Image">
+                <figcaption class="caption">Gradient of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.1/boundary.png" alt="Boundary of Image">
+                <figcaption class="caption">Boundary of Image (pixel values &gt; 65)</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            <strong>1.2: Derivative of Gaussian (DoG) Filter</strong><br>
+            Below are images showing the results of applying the Derivative of Gaussian filter. 
+            Combining the Gaussian convolution operator with the differential operator yields the same result.
+        </p>
+
+        <div class="grid">
+            <figure>
+                <img src="../Images2/1.2/Dx.png" alt="Dx of Image">
+                <figcaption class="caption">Dx of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.2/Dy.png" alt="Dy of Image">
+                <figcaption class="caption">Dy of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.2/gradient.png" alt="Gradient of Image">
+                <figcaption class="caption">Gradient of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.2/boundary.png" alt="Boundary of Image">
+                <figcaption class="caption">Boundary of Image</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            Upon smoothing the image prior to convolving it with the derivative operators, I observe that the boundary is far more well defined. 
+            It's thicker and smoother. Below, we see that combining the Gaussian convolution operator with the differential operator yields the same result.
+        </p>
+
+        <div class="grid">
+            <figure>
+                <img src="../Images2/1.2/Dx.png" alt="Dx of Image">
+                <figcaption class="caption">Dx of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.2/Dy.png" alt="Dy of Image">
+                <figcaption class="caption">Dy of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.2/gradient.png" alt="Gradient of Image">
+                <figcaption class="caption">Gradient of Image</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images2/1.2/boundary.png" alt="Boundary of Image">
+                <figcaption class="caption">Boundary of Image</figcaption>
+            </figure>
+        </div>
+
+
+    </div>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Project 2</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+                margin: 0;
+                padding: 20px;
+                color: #333;
+                line-height: 1.6;
+            }
+    
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+    
+            h1 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 20px;
+                font-size: 2.5em;
+                letter-spacing: -1px;
+            }
+    
+            h2, h3 {
+                margin-top: 40px;
+                color: #555;
+                border-bottom: 2px solid #e2e2e2;
+                padding-bottom: 5px;
+            }
+    
+            p {
+                margin: 20px 0;
+                font-size: 1.1em;
+                color: #666;
+                text-align: justify;
+            }
+    
+            img {
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+                display: block;
+                margin: 10px auto;
+                border-radius: 10px;
+                border: 1px solid #e0e0e0;
+            }
+    
+            .caption {
+                text-align: center;
+                font-style: italic;
+                color: #777;
+                margin-top: 8px;
+            }
+    
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin: 20px 0;
+            }
+    
+            .grid img {
+                width: 100%;
+                max-width: 100%;
+            }
+    
+            .image-group {
+                margin: 30px 0;
+            }
+    
+            footer {
+                margin-top: 40px;
+                text-align: center;
+                font-size: 0.9em;
+                color: #aaa;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Fun with Filters and Frequencies!</h1>
+    
+            <p>
+                <strong>2.1: Image Sharpening</strong><br>
+                The image sharpening was quite interesting and fun! I used a single filter for my sharpening: 
+                <code>unsharp_mask_filter = (1+alpha)*impulse - alpha*kernel_3d</code>.
+            </p>
+            
+            <p>Progression of Taj Mahal sharpening:</p>
+            
+            <div class="image-group">
+                <figure>
+                    <img src="../Images2/2.1/original.png" alt="Original Image">
+                    <figcaption class="caption">Original Image</figcaption>
+                </figure>
+                <p>
+                    Initially, I made the error of normalizing my result instead of clipping, resulting in discoloration.
+                </p>
+                <figure>
+                    <img src="../Images2/2.1/normalization.png" alt="Normalization Error">
+                    <figcaption class="caption">Normalization Error</figcaption>
+                </figure>
+            </div>
+    
+            <p>Progression of Taj Sharpening with different alpha values:</p>
+            
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.1/alpha1.png" alt="Alpha 1">
+                    <figcaption class="caption">alpha = 1</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.1/alpha2.png" alt="Alpha 2">
+                    <figcaption class="caption">alpha = 2</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.1/alpha5.png" alt="Alpha 5">
+                    <figcaption class="caption">alpha = 5</figcaption>
+                </figure>
+            </div>
+    
+            <p>
+                Next, I tried sharpening with an image of my own. I was finding the best results with alpha = 5.
+            </p>
+            
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.1/cupcake.png" alt="Cupcake">
+                    <figcaption class="caption">Original Cupcake</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.1/sharp_cupcake.png" alt="Sharpened Cupcake">
+                    <figcaption class="caption">Sharpened Cupcake</figcaption>
+                </figure>
+            </div>
+    
+            <p>
+                As a final experiment, I used an already sharp image, blurred it with a Gaussian filter, and resharpened. Here's my result!
+            </p>
+    
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.1/burger.png" alt="Original Burger">
+                    <figcaption class="caption">Original Burger</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.1/blurred.png" alt="Blurred Burger">
+                    <figcaption class="caption">Blurred Burger</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.1/resharp.png" alt="Resharpened Burger">
+                    <figcaption class="caption">Resharpened Burger</figcaption>
+                </figure>
+            </div>
+            <p>
+                Resharpened burger: actually turned out better than what I had initially! Again, alpha = 5.
+            </p>
+    
+            <p>
+                <strong>2.2: Hybrid Images</strong><br>
+                For me, this was the most challenging portion of the project.
+            </p>
+            
+            <p>
+                First, I made a hybrid image from Derek and Nutmeg.
+            </p>
+            
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.2/Derek.jpg" alt="Derek">
+                    <figcaption class="caption">Derek</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/nutmeg.jpg" alt="Nutmeg">
+                    <figcaption class="caption">Nutmeg</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/colored.png" alt="Hybrid Colored">
+                    <figcaption class="caption">Hybrid Image (Colored)</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/black_and_white.png" alt="Hybrid B&W">
+                    <figcaption class="caption">Hybrid Image (B&W)</figcaption>
+                </figure>
+            </div>
+    
+            <p>Fourier Analysis:</p>
+    
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.2/man.png" alt="Man Frequency">
+                    <figcaption class="caption">Man Frequency</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/cat.png" alt="Cat Frequency">
+                    <figcaption class="caption">Cat Frequency</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/bman.png" alt="Band Limited Man">
+                    <figcaption class="caption">Band Limited Man</figcaption>
+                </figure>
+            </div>
+            <p>As expected, several high frequencies are filtered.</p>
+    
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.2/scat.png" alt="Band Limited Cat">
+                    <figcaption class="caption">Band Limited Cat</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/hybrid.png" alt="Hybrid Image">
+                    <figcaption class="caption">Hybrid Image</figcaption>
+                </figure>
+            </div>
+            <p>As expected, several low frequencies are filtered.</p>
+    
+            <p>More hybrid images:</p>
+    
+            <div class="grid">
+                <figure>
+                    <img src="../Images2/2.2/sponge.png" alt="Sponge">
+                    <figcaption class="caption">Sponge</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/jerry.png" alt="Jerry">
+                    <figcaption class="caption">Jerry</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/serry.png" alt="Serry">
+                    <figcaption class="caption">Serry</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/tiger.png" alt="Tiger">
+                    <figcaption class="caption">Tiger</figcaption>
+                </figure>
+                <figure>
+                    <img src="../Images2/2.2/ephant.png" alt="Elephant">
+                </figure>
+            </div>
+        <p>
+            <strong>2.3: Gaussian and Laplacian Splits</strong><br>
+        </p>
+        <p>
+            2.3: Gaussian and Laplacian Splits</strong><br>
+        </p>
+        <img src="../Images2/2.3/serry.png" alt="Serry">
+    <footer>
+        &copy; 2024 Project 2 - Fun with Filters and Frequencies
+    </footer>
+</body>
+</html>
