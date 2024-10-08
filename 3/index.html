@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Morphing Project</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+        h1, h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        figure {
+            margin: 0;
+            text-align: center;
+        }
+        figcaption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--secondary-color);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            color: #fff;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Face Morphing Project</h1>
+        
+        <h2>Part 1: Defining Corresponding Points</h2>
+        <p>I started with pictures of myself (first/left) and my friend Joe (second/right). Some rescaling was necessary to make the images the same size. Consistency in size made the rest of the project easier.</p>
+        
+        <div class="grid">
+            <img src="../Images3/1/Samyak.png" alt="Original image of Samyak">
+            <img src="../Images3/1/Joe.png" alt="Original image of Joe">
+        </div>
+
+        <p>I began by making a mesh grid of keypoints on each of our faces. I used the Delaunay triangulation of the average each set of keypoints (one corresponding to me, and the other to Joe).</p>
+        
+        <div class="grid">
+            <img src="../Images3/1/meshSamyak.png" alt="Mesh grid of keypoints on Samyak's face">
+            <img src="../Images3/1/meshJoe.png" alt="Mesh grid of keypoints on Joe's face">
+        </div>
+        
+        <h2>Part 2: Computing the Midway Face</h2>
+        <p>The tricky part of solving this problem was producing an affine transformation that maps one triangle to another. To create this, I envisioned mapping the initial triangle to a right triangle, then the right triangle to my final desired triangle.</p>
+        <p>This way of conceptualizing the problem made the process of coding the affine transformation in python very smooth.</p>
+        <p>Once I made the affine transformation, I mapped the triangular spaces of the Samyak image and the Joe image to the triangular mesh of the midway image (whose shape was simply the mean of keypoints on Samyak and Joe).</p>
+        <p>Then, I averaged the colors of each image to obtain my result!</p>
+
+        <div class="grid">
+            <img src="../Images3/1/Samyak.png" alt="Original image of Samyak">
+            <img src="../Images3/1/Joe.png" alt="Original image of Joe">
+            <img src="../Images3/2/midway.png" alt="Midway face between Samyak and Joe">
+        </div>
+
+        <p>The tricky part of this was interpolating - that is, when I determined which pixels from the original image correspond with a pixel I am trying to calculate in the final image, I had to compute a weighted mean of surrounding pixels.</p>
+    </div>
+    
+    <div class="container">
+        <h2>Part 3: The Morph Sequence</h2>
+        <p>Producing the morph sequence was the most rewarding portion of this project!</p>
+        <p>Given my work in the previous part, the implementation here was rather simple. Essentially, the shape of the destination to which both images were being mapped was now a weighted mean of the two image shapes. As the gif progresses, the weight favors the latter image (Samyak).</p>
+        <p>Similarly, the color of the final image is also a changing weighted average of pixels from each image.</p>
+
+        <figure>
+            <img src="../Images3/3/JoeToSamyakMorph.gif" alt="Morphing sequence from Joe to Samyak">
+            <figcaption>Morphing sequence from Joe to Samyak</figcaption>
+        </figure>
+    </div>
+    
+    <div class="container">
+        <h2>Part 4: The "Mean Face" of a Population</h2>
+        <p>For this portion of the project, I used the FEI face database.</p>
+        <p>The database has images with their corresponding keypoints. A couple of examples are shown below.</p>
+        
+        <div class="grid">
+            <img src="../Images3/4/FEIEx1.png" alt="Example 1 from FEI face database">
+            <img src="../Images3/4/FEIEx2.png" alt="Example 2 from FEI face database">
+        </div>
+
+        <p>First, I used the keypoints of all images in the dataset to determine the average face shape. To take an average of these faces, I began by reshaping them to the average face shape.</p>
+        
+        <div class="grid">
+            <img src="../Images3/4/Im1NS.png" alt="Image 1 - Not shaped">
+            <img src="../Images3/4/Im1NSR.png" alt="Image 1 - Not shaped, rotated">
+            <img src="../Images3/4/Im1S.png" alt="Image 1 - Shaped">
+            <img src="../Images3/4/Im1SR.png" alt="Image 1 - Shaped, rotated">
+        </div>
+
+        <div class="grid">
+            <img src="../Images3/4/Im50NS.png" alt="Image 50 - Not shaped">
+            <img src="../Images3/4/Im50NSR.png" alt="Image 50 - Not shaped, rotated">
+            <img src="../Images3/4/Im50S.png" alt="Image 50 - Shaped">
+            <img src="../Images3/4/Im50SR.png" alt="Image 50 - Shaped, rotated">
+        </div>
+
+        <div class="grid">
+            <img src="../Images3/4/Im100NS.png" alt="Image 100 - Not shaped">
+            <img src="../Images3/4/Im100NSR.png" alt="Image 100 - Not shaped, rotated">
+            <img src="../Images3/4/Im100S.png" alt="Image 100 - Shaped">
+            <img src="../Images3/4/Im100SR.png" alt="Image 100 - Shaped, rotated">
+        </div>
+        
+        <p>Next, I took an average across all of these reshaped images. The dataset is divided into smiling and non-smiling images, so in that spirit, I took averages of smiling and non-smiling subsets of the dataset as well.</p>
+        <div class="grid">
+            <img src="../Images3/4/NoSmile.png" alt="Average non-smiling face">
+            <img src="../Images3/4/Smile.png" alt="Average smiling face">
+            <img src="../Images3/4/AvgAndShape.png" alt="Average face shape">
+        </div>
+
+        <p>Finally, I warped my own face (readjustments I made to my face and its keypoints are shown in the leftmost image below) into the average smiling face of the previous dataset (middle). I also warped the average smiling face into the shape of my face (right)!</p>
+        <div class="grid">
+            <img src="../Images3/4/smallSamyak.png" alt="Samyak's face with adjusted keypoints">
+            <img src="../Images3/4/reshapedSamyak.png" alt="Samyak's face warped into average smiling face">
+            <img src="../Images3/4/smileToSamyak.png" alt="Average smiling face warped into Samyak's face shape">
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Part 5: Caricatures - Extrapolating from the Mean</h2>
+        <p>In this part of the project, I wanted to see how I could control the extent to which I was smiling by morphing my image with the shape of the non-smiling average image from the previous part.</p>
+        <p>I manipulated a parameter "alpha" which determines the weight of image shapes to produce a final (target) image shape.</p>
+        
+        <div class="grid">
+            <img src="../Images3/5/smilingSamyak.png" alt="Samyak with exaggerated smile">
+            <img src="../Images3/5/seriousSamyak.png" alt="Samyak with exaggerated serious expression">
+        </div>
+
+        <p>A negative alpha seemed to overemphasize features that were in my original image which weren't present in the non-smiling average image (in this case a smile).</p>
+        <p>Similarly, a positive alpha seemed to overemphasize features that were NOT in my original image which were present in the non-smiling average image (in this case a serious face).</p>
+    </div>
+    
+    <div class="container">
+        <h2>Bells and Whistles: Feminizing Samyak</h2>
+
+        <p>I wanted to see if I could tune a specific feature of an image, similar to the way I tuned the smile on my face in the previous part.</p>
+        <p>In this part, I explore feminizing an image of myself! I began by taking an average across only smiling women in the previous dataset (I chose smiling women because I am smiling in the original image).</p>
+
+        <div class="grid">
+            <img src="../Images3/BellsAndWhistles/female.png" alt="Average face of smiling women">
+        </div>
+        
+        <p>Below are images of my face reshaped to the female average, morphed in appearance to the female average, and morphed in both shape and appearance to the female average.</p>
+        <div class="grid">
+            <img src="../Images3/BellsAndWhistles/reshapedSamyak.png" alt="Samyak's face reshaped to female average">
+            <img src="../Images3/BellsAndWhistles/newAppearanceSamyak.png" alt="Samyak's face with female average appearance">
+            <img src="../Images3/BellsAndWhistles/femaleSamyak.png" alt="Samyak's face morphed in shape and appearance to female average">
+        </div>
+    </div>
+
+    <p>Overall, this project was extremely rewarding in its challenges!</p>
+
+    <footer>
+        &copy; 2024 Face Morphing Project
+    </footer>
+</body>
+</html>
