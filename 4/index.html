@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Morphing Project</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+        h1, h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        figure {
+            margin: 0;
+            text-align: center;
+        }
+        figcaption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--secondary-color);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            color: #fff;
+            border-radius: 8px;
+
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+        }
+        .math-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .matrix {
+            font-family: monospace;
+            white-space: pre;
+            display: block;
+            margin: 10px 0;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stitching Photos into Mosaics Project</h1>
+        
+        <h1>Part A: Image Warping and Mosaicing</h1>
+        <h2>Shooting the Images</h2>
+        <p>All of the base images used in the project are displayed below. These images were used to produce 3 mosaics and 2 rectified images.</p>
+        
+        <div>
+            <h3>Rectified Images</h3>
+            <figure>
+                <img src="../Images4/base/poster.png" alt="poster">
+                <figcaption>Rectified Image: Poster</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images4/base/wood_frame.jpg" alt="wood frame">
+                <figcaption>Rectified Image: Wood Frame</figcaption>
+            </figure>
+        </div>
+        
+        <div>
+            <h3>Mosaic 1: Horizon Set 1 (Left to Right)</h3>
+            <figure>
+                <img src="../Images4/base/horizon_left.jpg" alt="left horizon 1">
+                <figcaption>Horizon Left 1</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images4/base/horizon_right.jpg" alt="right horizon 1">
+                <figcaption>Horizon Right 1</figcaption>
+            </figure>
+        </div>
+        
+        <div>
+            <h3>Mosaic 2: Horizon Set 2 (Left to Right)</h3>
+            <figure>
+                <img src="../Images4/base/horizon1_left.jpg" alt="left horizon 2">
+                <figcaption>Horizon Left 2</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images4/base/horizon1_right.jpg" alt="right horizon 2">
+                <figcaption>Horizon Right 2</figcaption>
+            </figure>
+        </div>
+        
+        <div>
+            <h3>Mosaic 3: Indoor Set (Left to Right)</h3>
+            <figure>
+                <img src="../Images4/base/indoor_left.jpg" alt="left indoor">
+                <figcaption>Indoor Left</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images4/base/indoor_right.jpg" alt="right indoor">
+                <figcaption>Indoor Right</figcaption>
+            </figure>
+        </div>
+        
+
+    <h2>Homography Transformation Theory</h2>
+
+    <h3>Introduction</h3>
+    <p>
+        A homography (or projective transformation) is a non-singular linear transformation that maps points from one plane to another while preserving collinearity. In computer vision and image processing, homographies are fundamental for describing the relationship between two different views of a planar surface.
+    </p>
+
+    <h3>Mathematical Formulation</h3>
+
+    <h4>Basic Definition</h4>
+    <p>
+        Given two corresponding points in homogeneous coordinates, <strong>p</strong> = (p₁, p₂, 1)ᵀ and <strong>q</strong> = (q₁, q₂, 1)ᵀ, a homography H maps these points according to:
+    </p>
+    <div class="math-block">
+        <strong>q</strong> ∝ H<strong>p</strong>
+    </div>
+    <p>
+        where ∝ denotes equality up to a scale factor, and H is a 3×3 matrix:
+    </p>
+    <div class="math-block">
+        <div class="matrix">
+H = [h₁₁  h₁₂  h₁₃]
+    [h₂₁  h₂₂  h₂₃]
+    [h₃₁  h₃₂   1 ]</div>
+    </div>
+
+    <h4>Expanded Form</h4>
+    <p>Writing this out explicitly:</p>
+    <div class="math-block">
+        <div class="matrix">
+[wq₁]   [h₁₁  h₁₂  h₁₃] [p₁]
+[wq₂] = [h₂₁  h₂₂  h₂₃] [p₂]
+[ w ]   [h₃₁  h₃₂   1 ] [ 1]</div>
+    </div>
+    <p>where w is a scaling factor (w ≠ 0).</p>
+
+    <h4>Linear System</h4>
+    <p>Rearranging these equations eliminates the homogeneous scale factor:</p>
+    <div class="math-block">
+        <div class="matrix">
+    [p₁  p₂  1   0   0   0  -p₁q₁  -p₂q₁]  [h₁₁]       [q₁]
+    [0   0   0   p₁  p₂  1  -p₁q₂  -p₂q₂]  [h₁₂]       [q₂]
+                                           [h₁₃]     
+                                           [h₂₁]     
+                                           [h₂₂]   =  
+                                           [h₂₃]     
+                                           [h₃₁]     
+                                           [h₃₂]     
+        </div>
+    </div>
+
+    <h3>Solution Methods</h3>
+
+    <h4>Direct Linear Transform (DLT)</h4>
+    <p>
+        For N ≥ 4 point correspondences, we obtain an overdetermined system:
+    </p>
+    <div class="math-block">
+        A<strong>h</strong> = <strong>b</strong>
+    </div>
+    <p>
+        where A is a 2N×8 matrix, <strong>h</strong> is the vector of unknowns (h₁₁, h₁₂, ..., h₃₂), and <strong>b</strong> is the vector of known values.
+    </p>
+
+    <h4>Least Squares Solution</h4>
+    <p>
+        The optimal solution in the least squares sense is given by:
+    </p>
+    <div class="math-block">
+        <strong>h</strong> = (AᵀA)⁻¹Aᵀ<strong>b</strong>
+    </div>
+    <p>
+        This minimizes ||A<strong>h</strong> - <strong>b</strong>||² and provides the best fit homography matrix given noisy measurements.
+    </p>
+
+
+<p>
+    When we have four or more correspondences, the system is overdetermined, and we can solve for <em>H</em> by applying least squares, yielding an optimal solution.
+</p>
+
+<h2>
+    Recovering the Homography
+</h2>
+
+<p>
+    To recover a homography transformation, as described in the previous section, we need two sets of points (mapped from and mapped to). The points used for the homography transformation calculation of the poster is shown below.
+    The purpose of this is to determine the image fame of reference when looking at the poster straight on.
+</p>
+
+<img src="../Images4/imRectification/pts.png" alt="posterPoints">
+
+<h2>
+    Corner Warp
+</h2>
+
+<p>
+    To warp the image, we warp the corners to produce an image boundary. Next, we will use the fully warped image to interpolate - mapping to every pixel within the image boundary.
+</p>
+
+<figure>
+    <img src="../Images4/imMosaic/boundary.png" alt="horizonBoundary">
+    <figcaption>The above image shows how the corners of the right image is placed on the left.</figcaption>
+</figure>
+
+<figure>
+    <img src="../Images4/imMosaic/boundaryFilled.png" alt="horizonboundaryFilled">
+    <figcaption>A visual of how the full right image will be placed on the left.</figcaption>
+</figure>
+
+<h2>
+    Image Rectification
+</h2>
+
+<p>
+    Finally, I warped the poster image. The raw and zoomed images are shown.
+</p>
+
+<figure>
+    <img src="../Images4/imRectification/warp.png" alt="warped poster">
+</figure>
+<figure>
+    <img src="../Images4/imRectification/zoomedWarp.png" alt="zoomed warp poster">
+</figure>
+
+<p>
+    A second image rectification on a wooden frame.
+</p>
+
+<figure>
+    <img src="../Images4/imRectification/frameWarp.png" alt="zoomed warp poster">
+</figure>
+
+<h2>
+    Image Mosaic'ing
+</h2>
+
+<p>
+    Image mosaic'ing differed from image rectification in a couple of ways. Firstly, common points had to be selected from each of the images in the mosaic for the homography calculation.
+</p>
+
+<figure>
+    <img src="../Images4/imMosaic/leftHorizon.png" alt="zoomed warp poster">
+</figure>
+
+<figure>
+    <img src="../Images4/imMosaic/leftHorizon.png" alt="zoomed warp poster">
+</figure>
+
+<p>
+    Then, to construct the mosaic, beyond overlaying the images, I also had to blend. Shown below are a naive blending method and a logical one which employs laplacian stacks.
+</p>
+
+<figure>
+    <img src="../Images4/imMosaic/unblendedMosaic.png" alt="zoomed warp poster">
+</figure>
+
+<figure>
+    <img src="../Images4/imMosaic/blendedMosaic.png" alt="zoomed warp poster">
+</figure>
+
+<p>
+    Shown below are a couple of other mosaics I made.
+</p>
+
+<figure>
+    <img src="../Images4/imMosaic/blendedMosaic2.png" alt="zoomed warp poster">
+    <label>A photo of the horizon taken from a difference side of the Campinile.</label>
+</figure>
+
+<figure>
+    <img src="../Images4/imMosaic/blendedMosaic3.png" alt="zoomed warp poster">
+    <label>A photo taken from inside my coop, Lothlorien!</label>
+</figure>
+
+<h1>Part B: Autostiching - Feature Finding and Matching</h1>
+
+<p>To automate stitching, I extracted corner features uniformly throughout the image, matched the features between images, and used the matched point features to execute image stitching as in the previous part.
+    In this part of the website, I'll walk the reader through autostitching of the two pictures in Horizon #1. At the end, I'll show the results for stitching Horizon #2 and Inside Loth.
+</p>
+
+<h2>Harris Corner Detection</h2>
+
+<figure>
+    <img src="../Images4/cornerDetection/allCorners.png">
+    <label>All Harris Corners</label>
+</figure>
+
+<figure>
+    <img src="../Images4/cornerDetection/someCorners.png">
+    <label>5000 corners with highest h-values</label>
+</figure>
+
+<h2>Adaptive Non-Maximal Suppression (ANMS)</h2>
+<h3>Theory</h3>
+<p>
+    In feature detection, it’s essential to maintain a good spatial distribution of interest points across the image, especially for applications like image stitching, where overlap areas may be limited. However, selecting interest points solely based on strength can lead to clusters of features in specific areas, leaving other regions sparse.
+</p>
+<p>
+    Adaptive Non-Maximal Suppression (ANMS) is a method that addresses this issue by ensuring features are well-distributed. It does so by suppressing interest points based on a computed "corner strength" and a neighborhood radius.
+</p>
+
+<h3>Suppression Radius Calculation</h3>
+<p>
+    To distribute features across the image, ANMS iteratively adjusts a suppression radius, <em>r</em>, until the desired number of interest points, <em>n<sub>ip</sub></em>, is reached. At each iteration, points are suppressed unless they are the maximum within a radius <em>r</em>. This means only the strongest features within their neighborhood are retained.
+</p>
+<p>
+    For each interest point <strong>x<sub>i</sub></strong>, the minimum suppression radius <strong>r<sub>i</sub></strong> is computed as:
+</p>
+<p style="text-align: center;">
+    <strong>r<sub>i</sub> = min |x<sub>i</sub> - x<sub>j</sub>|</strong>, such that <strong>f(x<sub>i</sub>) &lt; c<sub>robust</sub> * f(x<sub>j</sub>)</strong>
+</p>
+<p>
+    Here, <strong>x<sub>j</sub></strong> is a neighboring point, <em>I</em> is the set of all interest points, and <strong>c<sub>robust</sub></strong> (set to 0.9) is a parameter ensuring that <strong>x<sub>j</sub></strong> has significantly higher strength to warrant suppression.
+</p>
+
+<h3>Result of ANMS</h3>
+<p>
+    ANMS results in a set of well-distributed interest points, with each retained point having local maxima within its suppression radius. This method improves feature coverage across the image, reducing the likelihood of missed matches in overlapping regions.
+</p>
+<p>
+    The ANMS algorithm’s output is a list of interest points sorted by strength, providing a balance between spatial distribution and feature strength.
+</p>
+
+<figure>
+    <img src="../Images4/cornerDetection/unsuppressedCorners.png">
+</figure>
+
+<h2>Feature Descriptor Extraction</h2>
+<h3>Overview</h3>
+<p>
+    Once interest points are identified in an image, feature descriptors are extracted around each point to enable robust matching across images.
+</p>
+
+<h3>Local Patch Extraction</h3>
+<p>
+    For each detected interest point, a local patch centered around the point is sampled. I sampled every 5th pixel in both directions of a 40x40 axis-aligned patch.
+</p>
+
+<h3>Intensity Normalization</h3>
+<p>
+    I normalized each patch so that the result was a vector of mean 0 and standard deviation 1. This improves the correlation metric.
+</p>
+
+<h2>Descriptor Matching</h2>
+<p>
+    After extraction, the descriptors can be compared across images using Euclidean distance. Matching is achieved by finding the nearest neighbors between descriptors in different images.
+    To maintain quality in the descriptors, I used a threshold for <strong>t = e<sub>1-NN</sub> / e<sub>2-NN</strong> of 0.7, where <strong>e<sub>1-NN</sub></strong> and <strong>e<sub>2-NN</strong> are the first and second smallest Euclidian descriptor distances of a given feature. That is, features with <strong>t > 0.7</strong> were excluded.
+</p>
+
+<figure>
+    <img src="../Images4/featureMatching/left.png">
+    <label>Extracted features of left Horizon 1</label>
+</figure>
+<figure>
+    <img src="../Images4/featureMatching/left.png">
+    <label>Corresponding features of right Horizon 1</label>
+</figure>
+
+<h2>RANSAC for Robust Feature Matching</h2>
+<h3>Overview</h3>
+<p>
+    When matching feature descriptors across images, not all matches are correct due to noise, occlusions, or repetitive patterns in the images. This is very evident in the previous two images. To handle these outliers, we use RANSAC (Random Sample Consensus), estimating a transformation between images by iteratively selecting inlier matches and discarding outliers.
+</p>
+
+<h3>How RANSAC Works in Feature Matching</h3>
+<p>
+    The RANSAC algorithm proceeds as follows:
+</p>
+<ol>
+    <li><strong>Random Sampling:</strong> Select 4 feature pairs at random.</li>
+    <li><strong>Model Estimation:</strong> Based on the selected sample points, compute an exact homography transformation (H).</li>
+    <li><strong>Inlier Counting:</strong> Compute inliers where <strong>dist(p<sub>i</sub>', H p<sub>i</sub>) < &epsilon;</strong>.</li>
+    <li><strong>Iterate and Select Best Model:</strong> Repeat the above steps for a fixed number of iterations. After all iterations, use the largest set of inliers.</li>
+</ol>
+
+<h3>Result</h3>
+<p>Using RANSAC, I was able to filter the number of descriptors down to ones that matched each other within a 3-pixel radius post-homography. That is, I used <strong>&epsilon; = 3</strong></p>.
+
+<figure>
+    <img src="../Images4/RANSAC/left.png">
+    <label>Extracted features of left Horizon 1</label>
+</figure>
+<figure>
+    <img src="../Images4/RANSAC/right.png">
+    <label>Corresponding features of right Horizon 1</label>
+</figure>
+
+<p>This allowed me to compute a homography transformation, H, and perform stitching, as before.</p>
+
+<h4>Auto-Stitched vs. Manually-Stitched Mosaics</h4>
+<p>Below are three pairs of images showing auto-stitched mosaics alongside manually-stitched versions.</p>
+
+<!-- Row 1 -->
+<div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">
+    <figure style="text-align: center;">
+        <img src="../Images4/autoStitching/horizon.png" alt="Auto-Stitched Horizon" width="200">
+        <figcaption>Auto-Stitched: Horizon</figcaption>
+    </figure>
+    <figure style="text-align: center;">
+        <img src="../Images4/autoStitching/horizonManual.png" alt="Manual-Stitched Horizon" width="200">
+        <figcaption>Manual-Stitched: Horizon</figcaption>
+    </figure>
+</div>
+
+<!-- Row 2 -->
+<div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">
+    <figure style="text-align: center;">
+        <img src="../Images4/autoStitching/horizon2.png" alt="Auto-Stitched Horizon 2" width="200">
+        <figcaption>Auto-Stitched: Horizon 2</figcaption>
+    </figure>
+    <figure style="text-align: center;">
+        <img src="../Images4/autoStitching/horizon2Manual.png" alt="Manual-Stitched Horizon 2" width="200">
+        <figcaption>Manual-Stitched: Horizon 2</figcaption>
+    </figure>
+</div>
+
+<!-- Row 3 -->
+<div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">
+    <figure style="text-align: center;">
+        <img src="../Images4/autoStitching/indoor.png" alt="Auto-Stitched Indoor" width="200">
+        <figcaption>Auto-Stitched: Indoor</figcaption>
+    </figure>
+    <figure style="text-align: center;">
+        <img src="../Images4/autoStitching/indoorManual.png" alt="Manual-Stitched Indoor" width="200">
+        <figcaption>Manual-Stitched: Indoor</figcaption>
+    </figure>
+</div>
+
+
+<h2>Final Result</h2>
+<p>As before, I obtain the final results by blending!</p>
+<figure>
+    <img src="../Images4/imMosaic/blendedMosaic.png" alt="zoomed warp poster">
+</figure>
+
+<figure>
+    <img src="../Images4/imMosaic/blendedMosaic2.png" alt="zoomed warp poster">
+</figure>
+
+<figure>
+    <img src="../Images4/imMosaic/blendedMosaic3.png" alt="zoomed warp poster">
+</figure>
+
+<p>The coolest thing that I learned in the project was the process of auto-stitching! In particular, I enjoyed the ANMS and RANSAC algorithms! I found them to be intricate, and rewarding to understand.</p>
+
+<footer>
+    &copy; 2024 Image Stitching Project
+</footer>
+
+</body>
+</html>
