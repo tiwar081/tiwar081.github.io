@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Morphing Project</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+        h1, h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        figure {
+            margin: 0;
+            text-align: center;
+        }
+        figcaption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--secondary-color);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            color: #fff;
+            border-radius: 8px;
+
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+        }
+        .math-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .matrix {
+            font-family: monospace;
+            white-space: pre;
+            display: block;
+            margin: 10px 0;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diffusion Models</h1>
+        
+        <h1>Part A: Exploring the Power of Diffusion!</h1>
+        <h2>A.0: Trying it Out</h2>
+        <p>I ended up using seed=28 over the course of this project. </p>
+        <p>The following are two sets of images produced by DeepFloyd's image diffusion model! The descriptors on which the images were conditioned as well as the number of inference steps I had the model execute are both given.</p>
+        
+        <div>
+            <h3>DeepFloyd Generated Images</h3>
+            <figure>
+                <img src="../Images5/A/0/7_7.png" alt="poster">
+                <figcaption>7 Inference Steps at Each Stage</figcaption>
+            </figure>
+            <figure>
+                <img src="../Images5/A/0/50_50.png" alt="poster">
+                <figcaption>50 Inference Steps at Each Stage</figcaption>
+            </figure>
+        </div>
+        
+        <p>Notably, increasing the number of inference steps improved the quality, specificity, and image-to-noise ratio.</p>
+
+        <h2>A.1: Sampling Loops</h2>
+        <h3>1) Forward Process Implementation (Noising)</h3>
+        <p>The first thing I did is experiment with nosing the following are my base image (only 64x64 for runtime purposes), and noised images at varying noise levels.</p>
+
+        <div>
+            <h4>Formula used for noising</h4>
+            <figure>
+                <img src="../Images5/A/1_1/forward.png">
+            </figure>
+            <h4>Base Image</h4>
+            <figure>
+                <img src="../Images5/A/1_1/test.png">
+            </figure>
+            <h4>Noised Base Image</h4>
+            <figure>
+                <img src="../Images5/A/1_1/noised.png">
+            </figure>
+        </div>
+
+        <p>The various noise levels represent indices of "alpha_cumprod", the cummulative product of alphas used to transition an image from clean to noisy.</p>
+        
+        <h3>1.2) Classical/Gaussian Denoising</h3>
+        <p>The naive approach to denoising is Gaussian blur filtering. The results of denoising from each of the above noise levels via this method is shown below.</p>
+        <div>
+            <h4>Noise Level 250</h4>
+            <figure>
+                <img src="../Images5/A/1_2/250.png">
+            </figure>
+            <h4>Noise Level 500</h4>
+            <figure>
+                <img src="../Images5/A/1_2/500.png">
+            </figure>
+            <h4>Noise Level 750</h4>
+            <figure>
+                <img src="../Images5/A/1_2/750.png">
+            </figure>
+        </div>
+        
+        <h3>1.3) One-Step Denoising</h3>
+        <p>In this section, the denoising process is performed using a UNet model. The steps include:</p>
+        <ol>
+            <li>Estimating noise in the noisy image using <code>stage_1.unet</code>.</li>
+            <li>Removing the estimated noise to recover an approximation of the original image.</li>
+        </ol>
+
+        <div>
+            <h4>Noise Level 250</h4>
+            <p>Below are the results for noise level 250:</p>
+            <figure>
+                <figcaption>Original Image</figcaption>
+                <img src="../Images5/A/1_1/test.png" alt="Original image">
+            </figure>
+            <figure>
+                <figcaption>Noisy Image</figcaption>
+                <img src="../Images5/A/1_2/250.png" alt="Noisy image for noise level 250">
+            </figure>
+            <figure>
+                <figcaption>Denoised Image (UNet Estimate)</figcaption>
+                <img src="../Images5/A/1_3/250.png" alt="Denoised image for noise level 250">
+            </figure>
+        </div>
+
+        <div>
+            <h4>Noise Level 500</h4>
+            <p>Below are the results for noise level 500:</p>
+            <figure>
+                <figcaption>Original Image</figcaption>
+                <img src="../Images5/A/1_1/test.png" alt="Original image">
+            </figure>
+            <figure>
+                <figcaption>Noisy Image</figcaption>
+                <img src="../Images5/A/1_2/500.png" alt="Noisy image for noise level 500">
+            </figure>
+            <figure>
+                <figcaption>Denoised Image (UNet Estimate)</figcaption>
+                <img src="../Images5/A/1_3/500.png" alt="Denoised image for noise level 500">
+            </figure>
+        </div>
+
+        <div>
+            <h4>Noise Level 750</h4>
+            <p>Below are the results for noise level 750:</p>
+            <figure>
+                <figcaption>Original Image</figcaption>
+                <img src="../Images5/A/1_1/test.png" alt="Original image">
+            </figure>
+            <figure>
+                <figcaption>Noisy Image</figcaption>
+                <img src="../Images5/A/1_2/750.png" alt="Noisy image for noise level 750">
+            </figure>
+            <figure>
+                <figcaption>Denoised Image (UNet Estimate)</figcaption>
+                <img src="../Images5/A/1_3/750.png" alt="Denoised image for noise level 750">
+            </figure>
+        </div>
+
+        
+
+        <h3>1.4) Iterative Denoising</h3>
+<p>
+    In this section, iterative denoising is applied. The images were first noised to a high level (t = 750) and then iteratively denoised at decreasing noise levels. 
+    This process demonstrates the improvement at various stages of denoising, showing how the model progressively reconstructs the original image.
+</p>
+
+<div>
+    <h4>Iterative Denoising Steps</h4>
+    <figure>
+        <figcaption>Noisy Campanile at t=690</figcaption>
+        <img src="../Images5/A/1_4/690.png" alt="Noisy Campanile at t=690">
+    </figure>
+    <figure>
+        <figcaption>Noisy Campanile at t=540</figcaption>
+        <img src="../Images5/A/1_4/540.png" alt="Noisy Campanile at t=540">
+    </figure>
+    <figure>
+        <figcaption>Noisy Campanile at t=390</figcaption>
+        <img src="../Images5/A/1_4/390.png" alt="Noisy Campanile at t=390">
+    </figure>
+    <figure>
+        <figcaption>Noisy Campanile at t=240</figcaption>
+        <img src="../Images5/A/1_4/240.png" alt="Noisy Campanile at t=240">
+    </figure>
+    <figure>
+        <figcaption>Noisy Campanile at t=90</figcaption>
+        <img src="../Images5/A/1_4/90.png" alt="Noisy Campanile at t=90">
+    </figure>
+</div>
+
+<div>
+    <h4>Comparison of Final Results</h4>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_1/test.png" alt="Original Image">
+    </figure>
+    <figure>
+        <figcaption>Iteratively Denoised Campanile</figcaption>
+        <img src="../Images5/A/1_4/final_iterative.png" alt="Iteratively Denoised Campanile">
+    </figure>
+    <figure>
+        <figcaption>One-Step Denoised Campanile</figcaption>
+        <img src="../Images5/A/1_4/one_step.png" alt="One-Step Denoised Campanile">
+    </figure>
+    <figure>
+        <figcaption>Gaussian Blurred Campanile</figcaption>
+        <img src="../Images5/A/1_4/gaussian.png" alt="Gaussian Blurred Campanile">
+    </figure>
+</div>
+
+<p>
+    Comparing the results of iterative denoising, Gaussian denoising, and one-step denoising reveals key differences:
+</p>
+<ul>
+    <li>
+        <strong>Gaussian Denoising:</strong> This method blurred the existing noise, resulting in a degraded image quality. It failed to remove noise effectively and, in many cases, worsened the appearance of the image.
+    </li>
+    <li>
+        <strong>One-Step Denoising:</strong> While this approach reduced noise significantly, the final result was overly blurry, lacking finer details and clarity. It produced a passable result but could not fully restore the image.
+    </li>
+    <li>
+        <strong>Iterative Denoising:</strong> This approach consistently outperformed the others by iteratively removing noise and reconstructing the image. The model went beyond simply removing noise—it creatively reconstructed details to produce a high-quality image that closely resembled the original.
+    </li>
+</ul>
+<p>
+    Iterative denoising demonstrates the model's ability to "hallucinate" and reconstruct fine details by leveraging multiple steps, making it the most effective approach in this comparison.
+</p>
+
+        
+
+        <h3>1.5) Diffusion Model Sampling</h3>
+        <p>In this section, the diffusion model is used to generate images from scratch. By setting <code>i_start = 0</code> and passing in pure random noise, the model iteratively denoises the noise to generate a high-quality image. Below are five sampled results:</p>
+        
+        <div>
+            <h4>Generated Images</h4>
+            <figure>
+                <figcaption>Sampled Image 1</figcaption>
+                <img src="../Images5/A/1_5/im1.png" alt="Sampled Image 1">
+            </figure>
+            <figure>
+                <figcaption>Sampled Image 2</figcaption>
+                <img src="../Images5/A/1_5/im2.png" alt="Sampled Image 2">
+            </figure>
+            <figure>
+                <figcaption>Sampled Image 3</figcaption>
+                <img src="../Images5/A/1_5/im3.png" alt="Sampled Image 3">
+            </figure>
+            <figure>
+                <figcaption>Sampled Image 4</figcaption>
+                <img src="../Images5/A/1_5/im4.png" alt="Sampled Image 4">
+            </figure>
+            <figure>
+                <figcaption>Sampled Image 5</figcaption>
+                <img src="../Images5/A/1_5/im5.png" alt="Sampled Image 5">
+            </figure>
+        </div>
+        
+        <h3>1.6) Classifier-Free Guidance (CFG)</h3>
+    <p>
+        In the previous section, the generated images were often of poor quality, and some were nonsensical. 
+        To address this, we employ Classifier-Free Guidance (CFG), a technique that can significantly improve image quality at the cost of some image diversity.
+    </p>
+    <p>
+        CFG works by combining a conditional and an unconditional noise estimate. The new noise estimate is computed as:
+    </p>
+    <figure>
+        <img src="../Images5/A/1_6/equation.png" alt="CFG Equation">
+    </figure>
+    <p>
+        The parameter <code>γ</code> determines the strength of CFG. For <code>γ = 0</code>, the result is an unconditional noise estimate. For <code>γ = 1</code>, the result is a conditional noise estimate. 
+        When <code>γ > 1</code>, the model amplifies the differences between these two estimates, often leading to much higher quality images. 
+    </p>
+    <p>
+        To implement this, I modified the <code>iterative_denoise</code> function to include CFG, using a CFG scale of <code>γ = 7</code>. 
+        I used the prompt "<i>a high quality photo</i>" to guide the diffusion model and generated the following results:
+    </p>
+
+    <div>
+        <h4>Generated Images with Classifier-Free Guidance</h4>
+        <figure>
+            <figcaption>Sampled Image 1</figcaption>
+            <img src="../Images5/A/1_6/im1.png" alt="Sampled Image 1 with CFG">
+        </figure>
+        <figure>
+            <figcaption>Sampled Image 2</figcaption>
+            <img src="../Images5/A/1_6/im2.png" alt="Sampled Image 2 with CFG">
+        </figure>
+        <figure>
+            <figcaption>Sampled Image 3</figcaption>
+            <img src="../Images5/A/1_6/im3.png" alt="Sampled Image 3 with CFG">
+        </figure>
+        <figure>
+            <figcaption>Sampled Image 4</figcaption>
+            <img src="../Images5/A/1_6/im4.png" alt="Sampled Image 4 with CFG">
+        </figure>
+        <figure>
+            <figcaption>Sampled Image 5</figcaption>
+            <img src="../Images5/A/1_6/im5.png" alt="Sampled Image 5 with CFG">
+        </figure>
+    </div>
+
+    <h3>1.7) Image-to-image Translation</h3>
+    <p>
+        In this section, I used the diffusion model with Classifier-Free Guidance (CFG) to perform image-to-image translation. 
+        Starting from a test image, noise was added at different levels, and the iterative denoising process gradually restored the image while conditioning on the prompt "<i>a high quality photo</i>". 
+        Both the noised and denoised versions of each image are displayed together in a single combined image for better comparison.
+    </p>
+
+    <div>
+        <h4>Test Image 1: Gradual Denoising</h4>
+        <figure>
+            <figcaption>Original Image</figcaption>
+            <img src="../Images5/A/1_7/0/test1/original.png" alt="Test Image 1 Original">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=960</figcaption>
+            <img src="../Images5/A/1_7/0/test1/960.png" alt="Test Image 1 Noised and Denoised at t=960">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=900</figcaption>
+            <img src="../Images5/A/1_7/0/test1/900.png" alt="Test Image 1 Noised and Denoised at t=900">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=840</figcaption>
+            <img src="../Images5/A/1_7/0/test1/840.png" alt="Test Image 1 Noised and Denoised at t=840">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=780</figcaption>
+            <img src="../Images5/A/1_7/0/test1/780.png" alt="Test Image 1 Noised and Denoised at t=780">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=690</figcaption>
+            <img src="../Images5/A/1_7/0/test1/690.png" alt="Test Image 1 Noised and Denoised at t=690">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=390</figcaption>
+            <img src="../Images5/A/1_7/0/test1/390.png" alt="Test Image 1 Noised and Denoised at t=390">
+        </figure>
+    </div>
+
+    <div>
+        <h4>Test Image 2: Gradual Denoising</h4>
+        <figure>
+            <figcaption>Original Image</figcaption>
+            <img src="../Images5/A/1_7/0/test2/original.png" alt="Test Image 2 Original">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=960</figcaption>
+            <img src="../Images5/A/1_7/0/test2/960.png" alt="Test Image 2 Noised and Denoised at t=960">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=900</figcaption>
+            <img src="../Images5/A/1_7/0/test2/900.png" alt="Test Image 2 Noised and Denoised at t=900">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=840</figcaption>
+            <img src="../Images5/A/1_7/0/test2/840.png" alt="Test Image 2 Noised and Denoised at t=840">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=780</figcaption>
+            <img src="../Images5/A/1_7/0/test2/780.png" alt="Test Image 2 Noised and Denoised at t=780">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=690</figcaption>
+            <img src="../Images5/A/1_7/0/test2/690.png" alt="Test Image 2 Noised and Denoised at t=690">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=390</figcaption>
+            <img src="../Images5/A/1_7/0/test2/390.png" alt="Test Image 2 Noised and Denoised at t=390">
+        </figure>
+    </div>
+
+    <div>
+        <h4>Test Image 3: Gradual Denoising</h4>
+        <figure>
+            <figcaption>Original Image</figcaption>
+            <img src="../Images5/A/1_7/0/test3/original.png" alt="Test Image 3 Original">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=960</figcaption>
+            <img src="../Images5/A/1_7/0/test3/960.png" alt="Test Image 3 Noised and Denoised at t=960">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=900</figcaption>
+            <img src="../Images5/A/1_7/0/test3/900.png" alt="Test Image 3 Noised and Denoised at t=900">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=840</figcaption>
+            <img src="../Images5/A/1_7/0/test3/840.png" alt="Test Image 3 Noised and Denoised at t=840">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=780</figcaption>
+            <img src="../Images5/A/1_7/0/test3/780.png" alt="Test Image 3 Noised and Denoised at t=780">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=690</figcaption>
+            <img src="../Images5/A/1_7/0/test3/690.png" alt="Test Image 3 Noised and Denoised at t=690">
+        </figure>
+        <figure>
+            <figcaption>Noised and Denoised at t=390</figcaption>
+            <img src="../Images5/A/1_7/0/test3/390.png" alt="Test Image 3 Noised and Denoised at t=390">
+        </figure>
+    </div>
+
+    <h3>1.7.1) Editing Hand-Drawn and Web Images</h3>
+<p>
+    In this section, I experimented with applying edits to non-realistic images, such as hand-drawn sketches and web images, using the iterative denoising process with Classifier-Free Guidance (CFG). 
+    Starting from the noisy versions, the images were progressively denoised at different levels of noise (<code>i_start</code> = 1, 3, 5, 7, 10, 20). 
+    Note that a higher <code>i_start</code> value corresponds to a lower noise level or a later time step in the denoising process, leading to outputs that are closer to the original image.
+</p>
+
+<div>
+    <h4>Web Image: Gradual Denoising</h4>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_7/1/web/original.png" alt="Web Image Original">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 1</figcaption>
+        <img src="../Images5/A/1_7/1/web/1.png" alt="Web Image i_start=1">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 3</figcaption>
+        <img src="../Images5/A/1_7/1/web/3.png" alt="Web Image i_start=3">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 5</figcaption>
+        <img src="../Images5/A/1_7/1/web/5.png" alt="Web Image i_start=5">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 7</figcaption>
+        <img src="../Images5/A/1_7/1/web/7.png" alt="Web Image i_start=7">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 10</figcaption>
+        <img src="../Images5/A/1_7/1/web/10.png" alt="Web Image i_start=10">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 20</figcaption>
+        <img src="../Images5/A/1_7/1/web/20.png" alt="Web Image i_start=20">
+    </figure>
+</div>
+
+<div>
+    <h4>Hand-Drawn Image 1: Gradual Denoising</h4>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/original.png" alt="Hand-Drawn Image 1 Original">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 1</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/1.png" alt="Hand-Drawn Image 1 i_start=1">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 3</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/3.png" alt="Hand-Drawn Image 1 i_start=3">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 5</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/5.png" alt="Hand-Drawn Image 1 i_start=5">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 7</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/7.png" alt="Hand-Drawn Image 1 i_start=7">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 10</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/10.png" alt="Hand-Drawn Image 1 i_start=10">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 20</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn1/20.png" alt="Hand-Drawn Image 1 i_start=20">
+    </figure>
+</div>
+
+<div>
+    <h4>Hand-Drawn Image 2: Gradual Denoising</h4>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/original.png" alt="Hand-Drawn Image 2 Original">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 1</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/1.png" alt="Hand-Drawn Image 2 i_start=1">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 3</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/3.png" alt="Hand-Drawn Image 2 i_start=3">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 5</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/5.png" alt="Hand-Drawn Image 2 i_start=5">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 7</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/7.png" alt="Hand-Drawn Image 2 i_start=7">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 10</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/10.png" alt="Hand-Drawn Image 2 i_start=10">
+    </figure>
+    <figure>
+        <figcaption>Noise Level i_start = 20</figcaption>
+        <img src="../Images5/A/1_7/1/hand_drawn2/20.png" alt="Hand-Drawn Image 2 i_start=20">
+    </figure>
+</div>
+
+<p>Two key observations:</p>
+<ol>
+    <li> Noising the image too much prior to diffusion results in a completely new image.</li>
+    <li> Not noising the image enough yields (close to) the original image.</li>
+</ol>
+
+<p>When the image is noised just right, the model has just enough structure to produce what was requested, but not enough to produce the same as what was requested. Therefore, it fills in the gaps with the image data its been trained on, producing a "realistic" version of the original image!</p>
+
+<h3>1.7.2) Inpainting</h3>
+<p>
+    In this section, I applied inpainting to modify specific parts of an image while preserving other regions. 
+    Using a binary mask, areas with a value of 0 remain unchanged, while areas with a value of 1 are edited through the iterative diffusion process. 
+    This allows new content to be generated in selected regions, following the methodology described in the RePaint paper.
+</p>
+
+<div>
+    <h4>Setup</h4>
+    <figure>
+        <img src="../Images5/A/1_7/2/original.png" alt="Original Image">
+    </figure>
+</div>
+
+<div>
+    <h4>Inpainting Process</h4>
+    <p>The inpainting process progressively restores the masked area using decreasing noise levels. Below are the intermediate steps and the final result:</p>
+    <figure>
+        <figcaption>Noise Level t=990</figcaption>
+        <img src="../Images5/A/1_7/2/990.png" alt="Inpainting at t=990">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t=840</figcaption>
+        <img src="../Images5/A/1_7/2/840.png" alt="Inpainting at t=840">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t=690</figcaption>
+        <img src="../Images5/A/1_7/2/690.png" alt="Inpainting at t=690">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t=540</figcaption>
+        <img src="../Images5/A/1_7/2/540.png" alt="Inpainting at t=540">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t=390</figcaption>
+        <img src="../Images5/A/1_7/2/390.png" alt="Inpainting at t=390">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t=240</figcaption>
+        <img src="../Images5/A/1_7/2/240.png" alt="Inpainting at t=240">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t=90</figcaption>
+        <img src="../Images5/A/1_7/2/90.png" alt="Inpainting at t=90">
+    </figure>
+    <figure>
+        <figcaption>Final Result</figcaption>
+        <img src="../Images5/A/1_7/2/final.png" alt="Final Inpainting Result">
+    </figure>
+</div>
+<p>
+    The inpainting process shows how the masked area is gradually modified through successive iterations, leading to a realistic reconstruction that blends seamlessly with the unaltered parts of the image.
+</p>
+
+<h3>1.7.3: Text-Conditional Image-to-image Translation</h3>
+<p>
+    In this section, I used the same process as SDEdit but added a text prompt to guide the projection. 
+    Instead of only projecting to the natural image manifold, the model incorporates a textual description to further influence the output. 
+    This process modifies the image to align both with the original content and the prompt. 
+    Below are the results for three test images, progressively denoised at different noise levels (<code>t</code> = 960, 900, 840, 780, 690, 390).
+</p>
+<p>
+    Note: Each image combines both the noised and denoised versions for easier comparison.
+</p>
+
+<div>
+    <h4>Test Image 1: Campanile with the Prompt "a rocket ship"</h4>
+    <p>
+        This test starts with an image of the Campanile and applies the text prompt "<i>a rocket ship</i>". 
+        The model transforms the image to incorporate elements of a rocket ship while gradually removing noise.
+    </p>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_7/3/test1/original.png" alt="Test Image 1 Original">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 960</figcaption>
+        <img src="../Images5/A/1_7/3/test1/960.png" alt="Test Image 1 t=960">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 900</figcaption>
+        <img src="../Images5/A/1_7/3/test1/900.png" alt="Test Image 1 t=900">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 840</figcaption>
+        <img src="../Images5/A/1_7/3/test1/840.png" alt="Test Image 1 t=840">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 780</figcaption>
+        <img src="../Images5/A/1_7/3/test1/780.png" alt="Test Image 1 t=780">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 690</figcaption>
+        <img src="../Images5/A/1_7/3/test1/690.png" alt="Test Image 1 t=690">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 390</figcaption>
+        <img src="../Images5/A/1_7/3/test1/390.png" alt="Test Image 1 t=390">
+    </figure>
+</div>
+
+<div>
+    <h4>Test Image 2: Minecraft Village with the Prompt "an oil painting of a snowy mountain village"</h4>
+    <p>
+        This test starts with an image of a Minecraft village and applies the text prompt "<i>an oil painting of a snowy mountain village</i>". 
+        The model transforms the blocky landscape into a more painterly and snowy aesthetic while gradually removing noise.
+    </p>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_7/3/test2/original.png" alt="Test Image 2 Original">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 960</figcaption>
+        <img src="../Images5/A/1_7/3/test2/960.png" alt="Test Image 2 t=960">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 900</figcaption>
+        <img src="../Images5/A/1_7/3/test2/900.png" alt="Test Image 2 t=900">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 840</figcaption>
+        <img src="../Images5/A/1_7/3/test2/840.png" alt="Test Image 2 t=840">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 780</figcaption>
+        <img src="../Images5/A/1_7/3/test2/780.png" alt="Test Image 2 t=780">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 690</figcaption>
+        <img src="../Images5/A/1_7/3/test2/690.png" alt="Test Image 2 t=690">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 390</figcaption>
+        <img src="../Images5/A/1_7/3/test2/390.png" alt="Test Image 2 t=390">
+    </figure>
+</div>
+
+<div>
+    <h4>Test Image 3: Woman Wearing a Hat with the Prompt "a man wearing a hat"</h4>
+    <p>
+        This test starts with an image of a woman wearing a hat and applies the text prompt "<i>a man wearing a hat</i>". 
+        The model adjusts the facial features and appearance to align with the prompt while preserving the overall hat element.
+    </p>
+    <figure>
+        <figcaption>Original Image</figcaption>
+        <img src="../Images5/A/1_7/3/test3/original.png" alt="Test Image 3 Original">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 960</figcaption>
+        <img src="../Images5/A/1_7/3/test3/960.png" alt="Test Image 3 t=960">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 900</figcaption>
+        <img src="../Images5/A/1_7/3/test3/900.png" alt="Test Image 3 t=900">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 840</figcaption>
+        <img src="../Images5/A/1_7/3/test3/840.png" alt="Test Image 3 t=840">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 780</figcaption>
+        <img src="../Images5/A/1_7/3/test3/780.png" alt="Test Image 3 t=780">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 690</figcaption>
+        <img src="../Images5/A/1_7/3/test3/690.png" alt="Test Image 3 t=690">
+    </figure>
+    <figure>
+        <figcaption>Noise Level t = 390</figcaption>
+        <img src="../Images5/A/1_7/3/test3/390.png" alt="Test Image 3 t=390">
+    </figure>
+</div>
+
+<p>
+    Interestingly, the final results appear to have a hybrid quality, combining elements of the original image and the influence of the text prompt, with the last images being the best blend for the campinile x rocket and mc village x snowy village, and the second last image being best for the woman x man blend.
+    This behavior closely resembles what I aim to achieve explicitly in Section 1.9, where the model generates hybrid images directly from scratch using specific textual guidance.
+</p>
+
+<h3>1.8: Visual Anagrams</h3>
+<p>
+    In this section, I implemented visual anagrams using the diffusion model. 
+    By averaging the noise estimates for two different prompts and orientations (right-side-up and upside-down), the model generates images that look different depending on how they are viewed.
+</p>
+<p>
+    Below are the results for three visual anagrams, each generated with two prompts. The same image is displayed twice: once upright and once flipped upside-down to highlight the illusion.
+</p>
+
+<div>
+    <h4>Image 1</h4>
+    <p>
+        Prompts: "<i>an oil painting of people around a campfire</i>" (right-side-up) and "<i>an oil painting of an old man</i>" (upside-down).
+    </p>
+    <figure>
+        <figcaption>Right-Side-Up: "an oil painting of people around a campfire"</figcaption>
+        <img src="../Images5/A/1_8/im1.png" alt="Image 1 Upright">
+    </figure>
+    <figure>
+        <figcaption>Upside-Down: "an oil painting of an old man"</figcaption>
+        <img src="../Images5/A/1_8/im1.png" style="transform: rotate(180deg);" alt="Image 1 Upside Down">
+    </figure>
+</div>
+
+<div>
+    <h4>Image 2</h4>
+    <p>
+        Prompts: "<i>a photo of a hipster barista</i>" (right-side-up) and "<i>a rocket ship</i>" (upside-down).
+    </p>
+    <figure>
+        <figcaption>Right-Side-Up: "a photo of a hipster barista"</figcaption>
+        <img src="../Images5/A/1_8/im2.png" alt="Image 2 Upright">
+    </figure>
+    <figure>
+        <figcaption>Upside-Down: "a rocket ship"</figcaption>
+        <img src="../Images5/A/1_8/im2.png" style="transform: rotate(180deg);" alt="Image 2 Upside Down">
+    </figure>
+</div>
+
+<div>
+    <h4>Image 3</h4>
+    <p>
+        Prompts: "<i>a man wearing a hat</i>" (right-side-up) and "<i>a photo of a man</i>" (upside-down).
+    </p>
+    <figure>
+        <figcaption>Right-Side-Up: "a man wearing a hat"</figcaption>
+        <img src="../Images5/A/1_8/im3.png" alt="Image 3 Upright">
+    </figure>
+    <figure>
+        <figcaption>Upside-Down: "a photo of a man"</figcaption>
+        <img src="../Images5/A/1_8/im3.png" style="transform: rotate(180deg);" alt="Image 3 Upside Down">
+    </figure>
+</div>
+
+<h3>1.9: Hybrid Images</h3>
+<p>
+    In this section, I implemented hybrid image generation using the Factorized Diffusion technique. 
+    By combining low-frequency components from one noise estimate with high-frequency components from another, the model creates images that appear different depending on the viewing distance.
+</p>
+<p>
+    The total noise used in generating the hybrid images is calculated using the following equation:
+</p>
+<figure>
+    <img src="../Images5/A/1_9/equation.png" alt="Equation for Total Noise">
+</figure>
+<p>
+    This equation shows how the low-frequency and high-frequency noise components are combined to form the total noise, allowing the model to blend two prompts effectively.
+</p>
+<p>
+    Below are the results for three hybrid images, each generated with two prompts.
+</p>
+
+<div>
+    <h4>Image 1: Skull and Waterfalls</h4>
+    <p>
+        Prompts: "<i>a lithograph of a skull</i>" (low frequencies) and "<i>a lithograph of waterfalls</i>" (high frequencies).
+    </p>
+    <img src="../Images5/A/1_9/im1.png" alt="Hybrid Image 1">
+</div>
+
+<div>
+    <h4>Image 2: Old Man and People Around a Campfire</h4>
+    <p>
+        Prompts: "<i>an oil painting of an old man</i>" (low frequencies) and "<i>an oil painting of people around a campfire</i>" (high frequencies).
+    </p>
+    <img src="../Images5/A/1_9/im2.png" alt="Hybrid Image 2">
+</div>
+
+<div>
+    <h4>Image 3: Rocket Ship and Pencil</h4>
+    <p>
+        Prompts: "<i>a rocket ship</i>" (low frequencies) and "<i>a pencil</i>" (high frequencies).
+    </p>
+    <img src="../Images5/A/1_9/im3.png" alt="Hybrid Image 3">
+</div>
+
+<p>
+Similar to project 2, the low-pass filtered images are visible from a distance, the high-pass filtered images are more obvious from up close. Our AI seamlessly integrates the two!
+</p>
+
+<h1>Part B: Exploring the Power of Diffusion!</h1>
+<p>This part of the project was extremely interesting and ultimately rewarding! I got to write and train my own diffusion model on MNIST digit images.</p>
+<h2>B.1: Training a Single-Step Denoiser UNET</h2>
+
+<h3>B.1.1: Visualizing the Noising Process</h3>
+<p>
+    To begin, we visualized the noising process by applying Gaussian noise to the MNIST dataset at varying levels of <code>σ</code>. 
+    This process demonstrates how images are progressively corrupted as the noise level increases. 
+    The visualization below shows the results for <code>σ</code> values ranging from 0.0 (no noise) to 1.0 (maximum noise):
+</p>
+
+<div>
+    <figure>
+        <figcaption>Visualization of the Noising Process (σ = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0])</figcaption>
+        <img src="../Images5/B/1/noising_process.png" alt="Visualization of Noising Process">
+    </figure>
+</div>
+
+<h3>B.1.2: Training the Single-Step Denoiser</h3>
+<p>
+    The UNet model was trained to denoise images at a fixed noise level of <code>σ = 0.5</code>. 
+    This approach, referred to as "single-step diffusion," does not involve iterative refinement. Instead, the model directly learns to map a noised image to its corresponding clean version in a single step.
+</p>
+<p>
+    During training, the Mean Squared Error (MSE) loss was minimized between the model’s prediction and the original (clean) image. 
+    This method is computationally efficient, as the model only needs to handle a single noise level, but it limits its generalizability to unseen noise distributions.
+</p>
+
+<div>
+    <figure>
+        <figcaption>Training Loss Curve Over Iterations</figcaption>
+        <img src="../Images5/B/1/training_loss.png" alt="Training Loss Curve">
+    </figure>
+    <p>
+        The graph above shows the training loss decreasing steadily over iterations. 
+        This indicates that the model is successfully learning to denoise images at <code>σ = 0.5</code>, reducing the error between its predictions and the original images.
+    </p>
+</div>
+
+<div>
+    <figure>
+        <figcaption>Sample Results After 1 Epoch</figcaption>
+        <img src="../Images5/B/1/epoch1.png" alt="Sample Results After 1 Epoch">
+    </figure>
+    <p>
+        After the first epoch, the model begins to produce results that are recognizable but still noisy. 
+        This early stage demonstrates the initial progress made by the model as it starts to understand the mapping from noisy to clean images.
+    </p>
+</div>
+
+<div>
+    <figure>
+        <figcaption>Sample Results After 5 Epochs</figcaption>
+        <img src="../Images5/B/1/epoch5.png" alt="Sample Results After 5 Epochs">
+    </figure>
+    <p>
+        By the fifth epoch, the model produces significantly improved outputs. The reconstructed images closely resemble the original clean images, 
+        indicating that the single-step denoiser has effectively learned to handle noise at <code>σ = 0.5</code>.
+    </p>
+</div>
+
+<h3>B.1.3: Testing on Out-of-Distribution Noise Levels</h3>
+<p>
+    Finally, we evaluated the model on images noised at different levels of <code>σ</code>, ranging from 0.0 to 1.0. 
+    This is referred to as out-of-distribution testing because the model was only trained at <code>σ = 0.5</code>. 
+    The results highlight the limitations of the single-step approach, as the model struggles to generalize to noise levels outside its training distribution.
+</p>
+
+<div>
+    <figure>
+        <figcaption>Sample Results on Out-of-Distribution Noise Levels (σ = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0])</figcaption>
+        <img src="../Images5/B/1/out_of_dist.png" alt="Sample Results with Out-of-Distribution Noise">
+    </figure>
+    <p>
+        While the model performs well at <code>σ = 0.5</code>, its ability to denoise images deteriorates at higher noise levels. 
+        This highlights a key limitation of single-step denoising and motivates the exploration of multi-step approaches in future work.
+    </p>
+</div>
+<p>
+    In summary, this section demonstrated the training and evaluation of a single-step denoiser. While effective for its intended noise level, this method is constrained in its generalizability, prompting further exploration of iterative denoising techniques.
+</p>
+
+<h2>B.2: Training a Diffusion Model</h2>
+<p>This was the most fascinating portion of the project for me! In it, I had the opportunity to code diffusion from scratch! Noisy images were transformed to MNIST digits</p>
+<h3>Part 1:</h3>
+<p>
+    In this section, we extend the single-step denoising UNet by introducing time-conditioning. The model is now trained to denoise images at various noise levels by using a time-conditioning parameter. This modification enables the UNet to generalize across multiple noise levels rather than being restricted to a single fixed noise level like before.
+</p>
+<p>
+    However, the MNIST digit labels themselves are not used in this model. As a result, while the denoised images are clean digits, they lack specificity or clarity since the model is not conditioned on any class-based information. This lack of conditioning leads to results that are somewhat blurry, similar to the issues observed in Part A of this project, where insufficient conditioning limited the sharpness of the generated outputs.
+</p>
+
+<h3>Training Process</h3>
+<p>
+    During training, the UNet was exposed to images corrupted at various noise levels and was tasked with reconstructing the original images. Below are the key results from this process:
+</p>
+
+<div>
+    <figure>
+        <figcaption>Training Loss Curve Over Epochs</figcaption>
+        <img src="../Images5/B/2_1/training_loss.png" alt="Training Loss Curve for Time-Conditioned UNet">
+    </figure>
+</div>
+
+<div>
+    <figure>
+        <figcaption>Sample Results After 5 Epochs</figcaption>
+        <img src="../Images5/B/2_1/epoch5.png" alt="Sample Results After 5 Epochs">
+    </figure>
+</div>
+
+<div>
+    <figure>
+        <figcaption>Sample Results After 20 Epochs</figcaption>
+        <img src="../Images5/B/2_1/epoch20.png" alt="Sample Results After 20 Epochs">
+    </figure>
+</div>
+
+<p>
+    As seen from the results, the training loss decreases steadily, indicating the model is learning to reconstruct clean images from noisy inputs. However, the lack of digit label information in this implementation means the outputs are clean but not sharply defined. This reinforces the importance of conditioning the model on additional context to improve its generative capabilities.
+</p>
+
+<p>
+    In the next part, we will introduce class-conditioning, which is expected to significantly improve the results by incorporating label-based guidance to refine the outputs further.
+</p>
+
+<h3>Part 2:</h3>
+<p>
+    To address the limitations observed in the time-conditioned model, we introduced class conditioning in this section. By utilizing the labels of the MNIST dataset, the model is now trained to not only denoise the images but also to produce specific digit classes. Class conditioning allows the model to utilize label information effectively, leading to sharper and more coherent outputs compared to the unconditioned model.
+</p>
+
+<p>
+    Class conditioning was incorporated into the UNet architecture by adding two additional fully connected blocks (FCBlocks) to process the class-conditioning vector <code>c</code>. This vector is encoded as a one-hot representation of the digit labels (0-9). To ensure the model can still handle unconditioned scenarios, we applied dropout, where the class-conditioning vector is set to zero 10% of the time (<code>p_uncond = 0.1</code>). 
+</p>
+<p>
+    The final model is conditioned on both the time step <code>t</code> and the class <code>c</code>, enabling it to reconstruct images at specific noise levels while also generating digits corresponding to the provided class label. This enabled us to generate from an arbitray noise level (and in particular, iteratively from pure noise) a handwritten digit of optionally specified class.
+</p>
+
+<div>
+    <figure>
+        <figcaption>Training Loss Curve Over Epochs</figcaption>
+        <img src="../Images5/B/2_2/training_loss.png" alt="Training Loss Curve for Class-Conditioned UNet">
+    </figure>
+</div>
+
+<div>
+    <figure>
+        <figcaption>Sample Results After 5 Epochs</figcaption>
+        <img src="../Images5/B/2_2/epoch5.png" alt="Sample Results After 5 Epochs">
+    </figure>
+</div>
+
+<div>
+    <figure>
+        <figcaption>Sample Results After 20 Epochs</figcaption>
+        <img src="../Images5/B/2_2/epoch20.png" alt="Sample Results After 20 Epochs">
+    </figure>
+</div>
+
+<p>
+    The training loss curve shows a steady decrease, indicating the model effectively learns to denoise and reconstruct specific digit classes from noisy inputs. The results after 5 and 20 epochs demonstrate a significant improvement in the sharpness and clarity of the generated digits compared to the unconditioned model. By explicitly conditioning on both time and class, the outputs become not only clean but also class-specific, addressing the limitations observed in the earlier implementations.
+</p>
+
+<h1>Conclusion</h1>
+<p>
+    This project provided a comprehensive exploration of diffusion models, I really enjoyed it!
+</p>
