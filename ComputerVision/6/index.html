@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Keypoint Detection and HDR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+            TeX: {equationNumbers: {autoNumber: "AMS"}}
+        });
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+        h1, h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        figure {
+            margin: 0;
+            text-align: center;
+        }
+        figcaption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--secondary-color);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            color: #fff;
+            border-radius: 8px;
+
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+        }
+        .math-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .matrix {
+            font-family: monospace;
+            white-space: pre;
+            display: block;
+            margin: 10px 0;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facial Keypoint Detection</h1>
+        
+        <h2>Part 1: Nose Tip Detection</h1>
+        <p>To get a feel for keypoint detection, I started off with just detecting the nose tips. Here are a few of the training data.</p>
+        
+        <div>
+            <figure>
+                <img src="../Images6/project1/p1/data/download.png" alt="Original image">
+            </figure>
+            <figure>
+                <img src="../Images6/project1/p1/data/download-1.png" alt="Original image">
+            </figure>
+            <figure>
+                <img src="../Images6/project1/p1/data/download-2.png" alt="Original image">
+            </figure>
+        </div>
+
+        <p>I trained a simple convolutional neural net with 4 convolutional layers and two fully connected layers to predict the location of the nose keypoint.</p>
+        <p>Training and Validation Losses:</p>
+        <img src="../Images6/project1/p1/training/tloss.png">
+        <img src="../Images6/project1/p1/training/vloss.png">
+        <div>
+            <p>Some good predictions of my model:</p>
+            <figure>
+                <img src="../Images6/project1/p1/training/good0.png" alt="Original image">
+            </figure>
+            <figure>
+                <img src="../Images6/project1/p1/training/good1.png" alt="Original image">
+            </figure>
+            <figure>
+                <img src="../Images6/project1/p1/training/good2.png" alt="Original image">
+            </figure>
+        </div>
+
+        <div>
+            <p>Some weak predictions of my model:</p>
+            <figure>
+                <img src="../Images6/project1/p1/training/bad0.png" alt="Original image">
+            </figure>
+            <figure>
+                <img src="../Images6/project1/p1/training/bad1.png" alt="Original image">
+            </figure>
+            <figure>
+                <img src="../Images6/project1/p1/training/bad2.png" alt="Original image">
+            </figure>
+        </div>
+        <p>Notably, in the bad predictions that my model makes, the person's face is tilted or shifted. This is the "out of distribution" data in my set.</p>
+        
+        <h2>Part 2: Full Facial Keypoints Detection</h2>
+        <p>This part aims to detect the full facial keypoint structure of faces. To widen the breadth of the training distribution, some random rotations (+/- 15 degrees), translations (+/- 10 pixels) and pixel jittering are induced. Below are the results and visualizations from the network.</p>
+    
+        <div class="section">
+            <h3>Network Architecture</h3>
+            <p>The network is a convolutional neural network (CNN) designed for facial keypoints detection. Below are the details of its architecture:</p>
+            <ul>
+                <li><strong>Input:</strong> Grayscale images with 1 channel of size <code>h × w</code>.</li>
+                <li><strong>Output:</strong> 116 values (x, y coordinates for 58 keypoints).</li>
+            </ul>
+            <h4>Convolutional Layers:</h4>
+            <table>
+                <tr>
+                    <th>Layer</th>
+                    <th>Input Channels</th>
+                    <th>Output Channels</th>
+                    <th>Kernel Size</th>
+                    <th>Stride</th>
+                    <th>Padding</th>
+                    <th>Output Dimensions</th>
+                </tr>
+                <tr>
+                    <td>Conv1</td>
+                    <td>1</td>
+                    <td>8</td>
+                    <td>7×7</td>
+                    <td>1</td>
+                    <td>3</td>
+                    <td>h/2 × w/2</td>
+                </tr>
+                <tr>
+                    <td>Conv2</td>
+                    <td>8</td>
+                    <td>14</td>
+                    <td>5×5</td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>h/4 × w/4</td>
+                </tr>
+                <tr>
+                    <td>Conv3</td>
+                    <td>14</td>
+                    <td>20</td>
+                    <td>3×3</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>h/8 × w/8</td>
+                </tr>
+                <tr>
+                    <td>Conv4</td>
+                    <td>20</td>
+                    <td>26</td>
+                    <td>3×3</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>h/16 × w/16</td>
+                </tr>
+                <tr>
+                    <td>Conv5</td>
+                    <td>26</td>
+                    <td>32</td>
+                    <td>3×3</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>h/16 × w/16</td>
+                </tr>
+            </table>
+            <h4>Fully Connected Layers:</h4>
+            <ul>
+                <li><strong>Layer 1:</strong> Input = 5280, Output = 2000, Activation = ReLU.</li>
+                <li><strong>Layer 2:</strong> Input = 2000, Output = 500, Activation = ReLU.</li>
+                <li><strong>Layer 3:</strong> Input = 500, Output = 116 (x, y coordinates), Activation = None.</li>
+            </ul>
+            <h4>Hyperparameters:</h4>
+            <ul>
+                <li><strong>Learning Rate:</strong> 2×10⁻⁴</li>
+                <li><strong>Loss Function:</strong> Mean Squared Error (MSE).</li>
+                <li><strong>Optimizer:</strong> Adam Optimizer.</li>
+                <li><strong>Batch Size:</strong> 1</li>
+            </ul>
+        </div>
+    
+        <div class="section">
+            <h3>1. Sampled Images with Ground Truth Keypoints</h3>
+            <div class="container">
+                <img src="../Images6/project1/p2/data/d0.png" alt="Data Sample 0">
+                <img src="../Images6/project1/p2/data/d1.png" alt="Data Sample 1">
+                <img src="../Images6/project1/p2/data/d2.png" alt="Data Sample 2">
+            </div>
+        </div>
+    
+        <div class="section">
+            <h3>2. Training Loss Curve</h3>
+            <img src="../Images6/project1/p2/training/loss.png" alt="Loss Curve">
+            <p>The losses depicted are on the last image of each epoch, hence the high variance in the curve. However, there is certainly a downward trajectory and some sort of convergence.</p>
+        </div>
+    
+        <div class="section">
+            <h3>3. Examples of Good and Poor Keypoint Detection</h3>
+            <h4>Good Detections</h4>
+            <div class="container">
+                <img src="../Images6/project1/p2/training/good0.png" alt="Good Detection 0">
+                <img src="../Images6/project1/p2/training/good1.png" alt="Good Detection 1">
+            </div>
+            <h4>Poor Detections</h4>
+            <div class="container">
+                <img src="../Images6/project1/p2/training/bad0.png" alt="Bad Detection 0">
+                <img src="../Images6/project1/p2/training/bad1.png" alt="Bad Detection 1">
+            </div>
+        </div>
+        <p>In the images where detection was very poor, there are outstanding features that resemble certain creases the model is associating with the keypoints on which it was trained. For example, in Sample 13, the lower portion of the woman's smile is conflated with her chin. We can remedy this with a larger dataset.</p>
+        <div class="section">
+            <h3>4. Visualized Filters</h3>
+            <div class="container">
+                <img src="../Images6/project1/p2/training/c1.png" alt="Filter C1">
+                <img src="../Images6/project1/p2/training/c2.png" alt="Filter C2">
+                <img src="../Images6/project1/p2/training/c3.png" alt="Filter C3">
+                <img src="../Images6/project1/p2/training/c4.png" alt="Filter C4">
+                <img src="../Images6/project1/p2/training/c5.png" alt="Filter C5">
+            </div>
+        </div>     
+        
+        <h2>Part 3: Training with a Larger Dataset</h2>
+        <p>Finally, we try full facial keypoint detection with a larger dataset. We use the same noising techniques as in the previous part.</p>
+
+        <h3>Modified ResNet18 Architecture</h3>
+        <p>We adapt a pre-trained ResNet18 for facial keypoint detection. Below are the modifications:</p>
+        <ul>
+            <li>The first convolutional layer is updated to accept grayscale input (1 channel) with the following parameters:</li>
+            <ul>
+                <li><strong>Input Channels:</strong> 1</li>
+                <li><strong>Output Channels:</strong> 64</li>
+                <li><strong>Kernel Size:</strong> 7×7</li>
+                <li><strong>Stride:</strong> 2</li>
+                <li><strong>Padding:</strong> 3</li>
+            </ul>
+            <li>The fully connected (fc) layer is replaced to output 136 values, corresponding to 68 keypoints (x, y) coordinates.</li>
+        </ul>
+    <strong>Hyperparameters:</strong>
+        <ul>
+            <li><strong>Learning Rate:</strong> 3e-3</li>
+            <li><strong>Batch Size:</strong> 1</li>
+            <li><strong>Optimizer:</strong> Adam</li>
+            <li><strong>Loss Function:</strong> Mean Squared Error (MSE)</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>Training Results</h3>
+<p>The following plot illustrates the training and validation loss across iterations:</p>
+<img src="../Images6/project1/p3/training/loss.png" alt="Training and Validation Loss Plot">
+
+<h3>Visualization of Keypoint Predictions</h3>
+<p>Below are examples of keypoint predictions on the testing set:</p>
+<h4>Good Predictions:</h4>
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="../Images6/project1/p3/training/good0.png" alt="Good Prediction 1" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project1/p3/training/good1.png" alt="Good Prediction 2" style="margin: 5px; width: 300px;">
+</div>
+
+<h4>Bad Predictions:</h4>
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="../Images6/project1/p3/training/bad0.png" alt="Bad Prediction 1" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project1/p3/training/bad1.png" alt="Bad Prediction 2" style="margin: 5px; width: 300px;">
+</div>
+
+<p>Sample 9: The left side of the image is significantly less exposure, causing deterioration in keypoint detection.</p>
+<p>Sample 10: Much of the face is out of view of the camera. The portion of the keypoint detection that is incorrect in this image is the portion of the face that isn't on the physical image.</p>
+
+<h3>Testing on Personal Images</h3>
+<p>Here are the results of running the trained model on three personal images:</p>
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="../Images6/project1/p3/test/p1.png" alt="Personal Image 1" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project1/p3/test/p2.png" alt="Personal Image 2" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project1/p3/test/p3.png" alt="Personal Image 3" style="margin: 5px; width: 300px;">
+</div>
+
+<p><strong>Observations:</strong></p>
+<ul>
+    <li>Image 1: Keypoints were accurately detected.</li>
+    <li>Image 2: Minor errors in keypoint alignment, especially around the mouth.</li>
+    <li>Image 3: Good alignment, solid out of image facial structure prediction.</li>
+</ul>
+
+<h3>Testing on Given Test Images</h3>
+<p>Here are the results of running the model on provided test images:</p>
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="../Images6/project1/p3/test/t1.png" alt="Test Image 1" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project1/p3/test/t2.png" alt="Test Image 2" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project1/p3/test/t3.png" alt="Test Image 3" style="margin: 5px; width: 300px;">
+</div>
+
+<p><strong>Observations:</strong></p>
+<ul>
+    <li>Test Image 1: Slight distortion around the lips.</li>
+    <li>Test Image 2: Moderate errors around facial structure, good detection around eyes and nose.</li>
+    <li>Test Image 3: Good keypoint detection.</li>
+</ul>
+
+<h1>High Dynamic Range</h1>
+
+<h2>Solving for the Response Function (g)</h2>
+<p>The response function $g(Z)$ describes the logarithmic relationship between pixel values ($Z$) and exposure ($X = E \cdot \Delta t$). From Equation (2) in the paper, we derive:</p>
+<div class="math">
+    \[g(Z_{ij}) = \ln(E_i) + \ln(\Delta t_j)\]
+</div>
+
+<p>Where:</p>
+<ul>
+    <li>$Z_{ij}$: Pixel intensity of pixel $i$ in image $j$</li>
+    <li>$E_i$: Irradiance at pixel $i$</li>
+    <li>$\Delta t_j$: Exposure time of image $j$</li>
+</ul>
+
+<p>To solve for $g$, we minimize a quadratic objective function:</p>
+<div class="math">
+    \[O = \sum_{i=1}^N \sum_{j=1}^P w(Z_{ij}) [g(Z_{ij}) - \ln(E_i) - \ln(\Delta t_j)]^2 + \lambda \sum_{z=Z_{min}+1}^{Z_{max}-1} w(z) [g(z-1) - 2g(z) + g(z+1)]^2\]
+</div>
+
+<p>Here, $\lambda$ is a regularization parameter controlling smoothness. The weighting function $w(Z)$ emphasizes values in the middle of the intensity range:</p>
+<div class="math">
+    \[w(Z) = \begin{cases}
+        Z - Z_{min}, & \text{if } Z \leq 0.5(Z_{min} + Z_{max}) \\
+        Z_{max} - Z, & \text{otherwise}
+    \end{cases}\]
+</div>
+
+<p>g curves are shown below</p>
+<img src="../Images6/project2/radianceMap/charts.png" alt="Test Image 3" style="margin: 5px; width: 300px;">
+
+<h2>Constructing the HDR Radiance Map</h2>
+<p>Once $g$ is recovered, we compute the logarithmic irradiance $\ln(E_i)$ for each pixel:</p>
+<div class="math">
+    \[\ln(E_i) = \frac{\sum_{j=1}^P w(Z_{ij})(g(Z_{ij}) - \ln(\Delta t_j))}{\sum_{j=1}^P w(Z_{ij})}\]
+</div>
+<p>This combines information across exposures, reducing noise and artifacts.</p>
+
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="../Images6/project2/radianceMap/radiance.png" style="margin: 5px; width: 300px;">
+</div>
+
+<h2>Bilateral Filter Decomposition</h2>
+<p>The bilateral filtering process decomposes the HDR image into base and detail layers using the following steps:</p>
+
+<h3>1. Logarithmic Domain Processing</h3>
+<p>First, we convert the HDR radiance map to the logarithmic domain:</p>
+<div class="math">
+    \[L = \ln(I) \text{ where } I = \text{mean}(R, G, B)\]
+</div>
+
+<h3>2. Bilateral Filtering Parameters</h3>
+<p>The bilateral filter is applied with the following parameters:</p>
+<ul>
+    <li>Window diameter ($d$): 25 pixels</li>
+    <li>Color space standard deviation ($\sigma_{\text{color}}$): 7</li>
+    <li>Coordinate space standard deviation ($\sigma_{\text{space}}$): 7</li>
+</ul>
+
+<p>The bilateral filter preserves edges while smoothing the image by combining domain and range filtering:</p>
+<div class="math">
+    \[B(x) = \frac{1}{W_p}\sum_{x_i \in \Omega} G_{\sigma_s}(||x - x_i||)G_{\sigma_r}(|L(x) - L(x_i)|)L(x_i)\]
+</div>
+<p>Where:</p>
+<ul>
+    <li>$G_{\sigma_s}$ is the spatial Gaussian weight</li>
+    <li>$G_{\sigma_r}$ is the range Gaussian weight</li>
+    <li>$W_p$ is the normalization factor</li>
+</ul>
+
+<h3>3. Layer Decomposition</h3>
+<p>The image is decomposed into:</p>
+<ul>
+    <li>Base layer ($B$): Contains large-scale variations
+        <div class="math">
+            \[B = \text{bilateralFilter}(L, d=25, \sigma_{\text{color}}=7, \sigma_{\text{space}}=7)\]
+        </div>
+    </li>
+    <li>Detail layer ($D$): Preserves fine details
+        <div class="math">
+            \[D = L - B\]
+        </div>
+    </li>
+    <li>
+        Log Intensity (O):
+        <div class="math">
+            \[O = 2^{(B' + D)}\]
+        </div>
+    </li>
+    <li>
+        Renormalization and gamma compression. gamma = 2.2.
+    </li>
+</ul>
+
+<h2>Tone Mapping Comparison</h2>
+<p>We compare three different tone mapping approaches:</p>
+
+<h3>1. Global Scale (Baseline)</h3>
+
+<h3>2. Global Operator (Reinhard)</h3>
+<p>Global tone mapping with automatic exposure adjustment:</p>
+<div class="math">
+    \[E_{\text{display}} = \frac{E_{\text{world}}}{1 + E_{\text{world}}}\]
+</div>
+
+<h3>3. Local Operator (Bilateral)</h3>
+<p>Our implementation using bilateral filtering:</p>
+
+<h3>Comparative Analysis</h3>
+<div style="display: flex; flex-wrap: wrap;">
+    <img src="../Images6/project2/toneMaps/arch.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/bonsai.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/garage.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/garden.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/house.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/mug.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/window.png" style="margin: 5px; width: 300px;">
+    <img src="../Images6/project2/toneMaps/chapel.png" style="margin: 5px; width: 300px;">
+</div>
+
+<p>In summary, both projects were super fun! Facial keypoint detection gave me the opportunity to mess around with neural netoworks while HDR taught me some nuances of image exposure.</p>
+
+</body>
+</html>
