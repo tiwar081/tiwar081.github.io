@@ -4,38 +4,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Physics Projects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #2980b9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background-color: #f1f3f4;
+        }
+
+        .project-content {
+            padding: 24px;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .project-description {
+            color: #7f8c8d;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .project-link {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .project-link:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Experimental Physics Projects</h1>
-    </header>
-    <main>
-        <section>
-            <article>
-                <h2>Rutherford Scattering Experiment</h2>
-                <object data="rutherford.pdf" type="application/pdf" width="100%" height="500px">
-                    <p>It appears you don't have a PDF plugin for this browser. You can <a href="rutherford.pdf" download>download the report here</a>.</p>
-                </object>
-            </article>
-            <article>
-                <h2>Gamma Ray Spectroscopy</h2>
-                <object data="GMA.pdf" type="application/pdf" width="100%" height="500px">
-                    <p>It appears you don't have a PDF plugin for this browser. You can <a href="GMA.pdf" download>download the report here</a>.</p>
-                </object>
-            </article>
-            <article>
-                <h2>Determining the Speed of Sound</h2>
-                <object data="sound.pdf" type="application/pdf" width="100%" height="500px">
-                    <p>It appears you don't have a PDF plugin for this browser. You can <a href="sound.pdf" download>download the report here</a>.</p>
-                </object>
-            </article>
-            <article>
-                <h2>Determining the Speed of Light</h2>
-                <object data="light.pdf" type="application/pdf" width="100%" height="500px">
-                    <p>It appears you don't have a PDF plugin for this browser. You can <a href="light.pdf" download>download the report here</a>.</p>
-                </object>
-            </article>
-        </section>
-    </main>
+    <div class="container">
+        <a href="../" class="back-link">← Back to Portfolio</a>
+        <div class="header">
+            <h1>Physics Projects</h1>
+            <p>Research and experimental work in physics.</p>
+        </div>
+
+        <div class="projects-grid">
+            <!-- GWSP Project -->
+            <div class="project-card" onclick="window.open('GWSP/', '_blank')">
+                <img src="GWSP.png" alt="Gravitational Wave Signal Processing" class="project-image">
+                <div class="project-content">
+                    <h2 class="project-title">Gravitational Wave Signal Processing</h2>
+                    <p class="project-description">Applied  linear perturbation to LIGO's current GW signal model to account for the Earth's rotation, relevant for next generation detectors with longer signal durations.</p>
+                    <a href="GWSP/" class="project-link">View Project</a>
+                </div>
+            </div>
+
+            <!-- Experimental Physics Project -->
+            <div class="project-card" onclick="window.open('experimentalPhysics/', '_blank')">
+                <img src="experimentalPhysics.png" alt="Experimental Physics" class="project-image">
+                <div class="project-content">
+                    <h2 class="project-title">Experimental Physics</h2>
+                    <p class="project-description">Replicated classic physics experiments including Rutherford's gold foil scattering, gamma ray spectroscopy, and measurement of fundamental constants.</p>
+                    <a href="experimentalPhysics/" class="project-link">View Project</a>
+                </div>
+            </div>
+
+            <!-- QML Project -->
+            <div class="project-card" onclick="window.open('QML/', '_blank')">
+                <img src="QML.png" alt="Quantum Machine Learning" class="project-image">
+                <div class="project-content">
+                    <h2 class="project-title">Quantum Machine Learning</h2>
+                    <p class="project-description">Explored quantum computing applications to machine learning.</p>
+                    <a href="QML/" class="project-link">View Project</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>

@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Computer Vision Projects - Samyak Tiwari</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Vision Projects</title>
     <style>
-        :root {
-            --primary-color: #007bff;
-            --primary-hover: #0056b3;
-            --text-dark: #2c3e50;
-            --text-muted: #6c757d;
-            --bg-light: #f8f9fa;
-            --bg-white: #ffffff;
-            --border-radius: 12px;
-            --transition: all 0.25s ease;
-            --shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 6px 14px rgba(0, 0, 0, 0.12);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -25,145 +12,120 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
             color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
             line-height: 1.6;
         }
 
         .container {
-            background: var(--bg-white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 40px;
-            margin-top: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
         }
 
         .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary-color);
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #3498db;
             text-decoration: none;
             font-weight: 500;
-            margin-bottom: 20px;
-            transition: var(--transition);
         }
 
         .back-link:hover {
-            color: var(--primary-hover);
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        h1 {
-            font-size: 2.4rem;
-            font-weight: 500;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            font-weight: 400;
+            text-decoration: underline;
         }
 
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
         }
 
         .project-card {
-            background: var(--bg-light);
-            border-radius: var(--border-radius);
+            background: white;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border-left: 4px solid var(--primary-color);
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .project-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .project-image {
             width: 100%;
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-            flex-shrink: 0;
+            height: 250px;
+            object-fit: cover;
+            background-color: #f1f3f4;
         }
 
         .project-content {
-            padding: 20px 24px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            padding: 24px;
         }
 
         .project-title {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-            line-height: 1.3;
+            color: #2c3e50;
+            margin-bottom: 8px;
         }
 
         .project-description {
-            color: #495057;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            flex: 1;
+            color: #7f8c8d;
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
         .project-link {
             display: inline-block;
-            background: var(--primary-color);
+            margin-top: 16px;
+            padding: 12px 24px;
+            background-color: #3498db;
             color: white;
-            padding: 10px 20px;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 500;
-            font-size: 0.9rem;
-            align-self: flex-start;
-            transition: var(--transition);
+            transition: background-color 0.3s ease;
         }
 
         .project-link:hover {
-            background: var(--primary-hover);
-            transform: translateX(4px);
+            background-color: #2980b9;
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
             .container {
-                padding: 20px;
+                padding: 20px 15px;
             }
-
-            h1 {
+            
+            .header h1 {
                 font-size: 2rem;
             }
-
+            
             .projects-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 30px;
             }
         }
     </style>
@@ -172,102 +134,78 @@
     <div class="container">
         <a href="../" class="back-link">← Back to Portfolio</a>
         
-        <header>
-            <h1>👁️ Computer Vision Projects</h1>
-            <p class="subtitle">Deep learning and classical image processing.</p>
-        </header>
+        <div class="header">
+            <h1>Computer Vision Projects</h1>
+            <p>Deep learning and classical image processing.</p>
+        </div>
 
         <div class="projects-grid">
             <!-- Diffusion Models -->
             <div class="project-card" onclick="window.location.href='./5/index.html'">
-                <div class="project-image" style="background-image: url('./Images5/B/2_2/epoch20.png');"></div>
+                <img src="./Images5/B/2_2/epoch20.png" alt="Denoising Diffusion Models" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Denoising Diffusion Models</h3>
-                    <p class="project-description">
-                        Built and trained custom UNet across 20 epochs to <b>AI-generate MNIST digits</b>. 
-                        Leveraged DeepFloyd for text-conditioned generative image manipulation including 
-                        inpainting, visual anagrams, and hybrid image synthesis.
-                    </p>
+                    <h2 class="project-title">Denoising Diffusion Models</h2>
+                    <p class="project-description">Built and trained custom UNet across 20 epochs to AI-generate MNIST digits. Leveraged DeepFloyd for text-conditioned generative image manipulation including inpainting, visual anagrams, and hybrid image synthesis.</p>
                     <a href="./5/index.html" class="project-link">View Project</a>
                 </div>
             </div>
 
             <!-- Facial Keypoint Detection -->
             <div class="project-card" onclick="window.location.href='./6/index.html'">
-                <div class="project-image" style="background-image: url('./Images6/project1/p3/test/p1.png');"></div>
+                <img src="./Images6/project1/p3/test/p1.png" alt="Facial Keypoint Detection" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Facial Keypoint Detection & HDR</h3>
-                    <p class="project-description">
-                        Tested three CNN architectures for <b>facial keypoints prediction</b>: 1) un-noised training set (naive); 
-                        2) pixel-noised, randomly rotated, and randomly translated training set; 
-                        3) noised training set of 6000+ images.
-                    </p>
+                    <h2 class="project-title">Facial Keypoint Detection & HDR</h2>
+                    <p class="project-description">Tested three CNN architectures for facial keypoints prediction: un-noised training set, pixel-noised with random transformations, and noised training set of 6000+ images.</p>
                     <a href="./6/index.html" class="project-link">View Project</a>
                 </div>
             </div>
 
             <!-- Puffball -->
             <div class="project-card" onclick="window.location.href='./cs184/index.html'">
-                <div class="project-image" style="background-image: url('./cs184/images/grassfire/bear_puff.png');"></div>
+                <img src="./cs184/images/grassfire/bear_puff.png" alt="Puffball 2D-to-3D" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Puffball: 2D-to-3D Shape Construction</h3>
-                    <p class="project-description">
-                        Transform <b>2D shapes into 3D puffball</b> models using Medial Axis Transform to create the puff 
-                        and Delaunay triangulation to convert it to a mesh for surface reconstruction.
-                    </p>
+                    <h2 class="project-title">Puffball: 2D-to-3D Shape Construction</h2>
+                    <p class="project-description">Transform 2D shapes into 3D puffball models using Medial Axis Transform to create the puff and Delaunay triangulation to convert it to a mesh for surface reconstruction.</p>
                     <a href="./cs184/index.html" class="project-link">View Project</a>
                 </div>
             </div>
 
             <!-- Homographies -->
             <div class="project-card" onclick="window.location.href='./4/index.html'">
-                <div class="project-image" style="background-image: url('./Images4/imMosaic/blendedMosaic.png');"></div>
+                <img src="./Images4/imMosaic/blendedMosaic.png" alt="Homographies and Image Mosaicing" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Homographies and Image Mosaicing</h3>
-                    <p class="project-description">
-                        Automated pipeline for <b>two-image homographies</b> maintaining 3-pixel Euclidean distance between 
-                        150 corresponding keypoints. Integrated Harris Corner Detection, ANMS, Gaussian Pyramid 
-                        Descriptor Matching, and RANSAC to select, match, and align common points.
-                    </p>
+                    <h2 class="project-title">Homographies and Image Mosaicing</h2>
+                    <p class="project-description">Automated pipeline for two-image homographies maintaining 3-pixel Euclidean distance between 150 corresponding keypoints. Integrated Harris Corner Detection, ANMS, Gaussian Pyramid Descriptor Matching, and RANSAC.</p>
                     <a href="./4/index.html" class="project-link">View Project</a>
                 </div>
             </div>
 
             <!-- Face Morphing -->
             <div class="project-card" onclick="window.location.href='./3/index.html'">
-                <div class="project-image" style="background-image: url('./Images3/3/JoeToSamyakMorph.gif');"></div>
+                <img src="./Images3/3/JoeToSamyakMorph.gif" alt="Face Morphing" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Face Morphing</h3>
-                    <p class="project-description">
-                        Create <b>smooth transitions between faces</b> using Delaunay triangulation, feature detection, 
-                        geometric morphing techniques, and interpolation algorithms for seamless face transformations.
-                    </p>
+                    <h2 class="project-title">Face Morphing</h2>
+                    <p class="project-description">Create smooth transitions between faces using Delaunay triangulation, feature detection, geometric morphing techniques, and interpolation algorithms for seamless face transformations.</p>
                     <a href="./3/index.html" class="project-link">View Project</a>
                 </div>
             </div>
 
             <!-- Filters and Frequencies -->
             <div class="project-card" onclick="window.location.href='./2/index.html'">
-                <div class="project-image" style="background-image: url('./Images2/2.3/hybrid.png');"></div>
+                <img src="./Images2/2.3/hybrid.png" alt="Fun with Filters and Frequencies" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Fun with Filters and Frequencies</h3>
-                    <p class="project-description">
-                        Explore filtering techniques using Gaussian kernel to produce Gaussian and Laplacian 
-                        stacks for <b>image blending</b> using convolution and Fourier transforms for frequency domain processing.
-                    </p>
+                    <h2 class="project-title">Fun with Filters and Frequencies</h2>
+                    <p class="project-description">Explore filtering techniques using Gaussian kernel to produce Gaussian and Laplacian stacks for image blending using convolution and Fourier transforms for frequency domain processing.</p>
                     <a href="./2/index.html" class="project-link">View Project</a>
                 </div>
             </div>
 
             <!-- Colorizing Photos -->
             <div class="project-card" onclick="window.location.href='./1/index.html'">
-                <div class="project-image" style="background-image: url('./Images/out_self_portrait.jpg');"></div>
+                <img src="./Images/out_self_portrait.jpg" alt="Colorizing Photos" class="project-image">
                 <div class="project-content">
-                    <h3 class="project-title">Colorizing Photos</h3>
-                    <p class="project-description">
-                        <b>Transform black and white photographs into vibrant color images</b> using advanced image 
-                        processing techniques and colorization algorithms for historical photo restoration.
-                    </p>
+                    <h2 class="project-title">Colorizing Photos</h2>
+                    <p class="project-description">Transform black and white photographs into vibrant color images using advanced image processing techniques and colorization algorithms for historical photo restoration.</p>
                     <a href="./1/index.html" class="project-link">View Project</a>
                 </div>
             </div>
