@@ -33,7 +33,7 @@
         .main-content {
             display: flex;
             align-items: flex-start;
-            gap: 40px;
+            gap: 60px;
             margin-bottom: 40px;
         }
 
@@ -41,12 +41,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 300px;
+            min-width: 320px;
+            flex-shrink: 0;
         }
 
         .profile-image {
-            width: 280px;
-            height: 280px;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #4a90e2;
@@ -65,30 +66,39 @@
             margin-bottom: 10px;
         }
 
+        .content-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+
         .description {
             color: #e0e0e0;
-            font-size: 1.08rem;
+            font-size: 1.1rem;
             line-height: 1.7;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            max-width: 600px;
         }
 
         .project-buttons {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            flex: 1;
+            max-width: 400px;
         }
 
         .project-link {
             display: flex;
             align-items: center;
-            padding: 16px 24px;
+            padding: 18px 24px;
             background: #1a1a2e;
             border-radius: 10px;
             text-decoration: none;
             color: #e0e0e0;
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 0.02em;
             border: 1px solid #4a5568;
             transition: all 0.2s ease;
@@ -187,6 +197,7 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
+                gap: 30px;
             }
             
             .profile-section {
@@ -202,8 +213,18 @@
                 font-size: 2rem;
             }
             
+            .content-section {
+                align-items: center;
+                padding-top: 0;
+            }
+            
             .project-buttons {
                 width: 100%;
+                max-width: 350px;
+            }
+            
+            .description {
+                text-align: center;
             }
         }
     </style>
@@ -219,10 +240,9 @@
             </div>
             
             <div class="content-section">
-                
                 <div class="project-buttons">
                     <a href="./ComputerVision/" class="project-link">
-                        Computer Vision Projects 
+                        Computer Vision 
                         <span class="arrow">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -231,7 +251,7 @@
                     </a>
                     
                     <a href="./Robotics/" class="project-link">
-                        Robotics Projects 
+                        Robotics 
                         <span class="arrow">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -240,7 +260,7 @@
                     </a>
                     
                     <a href="./PhysicsProjects/" class="project-link">
-                        Physics Projects 
+                        Physics 
                         <span class="arrow">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -248,14 +268,15 @@
                         </span>
                     </a>
                 </div>
+                
+                <p class="description">
+                    MS in Mechanical Engineering at Carnegie Mellon University. UC Berkeley graduate in Physics, Computer Science, and Data Science. I'm passionate about 
+                    interpretable deep learning models at the intersection of computer vision and robotics. 
+                    With a strong physics background, I aim to bring unique mathematical insights to the field.
+                </p>
             </div>
         </div>
-        
-        <p class="description">
-            MS in Mechanical Engineering at Carnegie Mellon University. UC Berkeley graduate in Physics, Computer Science, and Data Science. I'm passionate about 
-            interpretable deep learning models at the intersection of computer vision and robotics. 
-            With a strong physics background, I aim to bring unique mathematical insights to the field.
-        </p>
+
         <div class="social-links">
             <!-- GitHub -->
             <a href="https://github.com/tiwar081" class="icon-link github-link">
