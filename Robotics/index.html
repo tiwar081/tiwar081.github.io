@@ -57,36 +57,47 @@
             color: white;
         }
 
-        .project-section {
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .project-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
+            overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .project-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: white;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .project-description {
             color: rgba(255, 255, 255, 0.9);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.4;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .project-link {
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding: 8px 16px;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -106,12 +117,11 @@
 
         .media-container {
             width: 100%;
-            max-width: 500px;
-            height: 280px;
+            height: 200px;
             border-radius: 8px;
             overflow: hidden;
             background-color: #f1f3f4;
-            margin: 0 auto;
+            margin-bottom: 15px;
         }
 
         .video-container {
@@ -156,6 +166,10 @@
             text-decoration: underline;
         }
 
+        .project-content {
+            padding: 15px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px 10px;
@@ -165,14 +179,13 @@
                 font-size: 1.8rem;
             }
             
-            .project-section {
-                padding: 15px;
-                margin-bottom: 15px;
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .media-container {
-                height: 200px;
-                max-width: 100%;
+                height: 180px;
             }
         }
     </style>
@@ -186,60 +199,70 @@
             <p class="header-description">Learning-based long horizon planning and visuo-motor control.</p>
         </div>
 
-        <div class="project-section">
-            <h2 class="project-title">CareBot: Voice-Controlled Autonomous Robot-Arm Assistant</h2>
-            <p class="project-description">Sonnet-based long horizon robot arm planner in PyBullet simulation. Inspired by <a href="https://creative-robotool.github.io/" target="_blank">RoboTool</a>.</p>
-            <a href="https://devpost.com/software/carebot-u4qlrz" class="project-link" target="_blank">View on Devpost</a>
-            <div class="media-container">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/ek3yyC_W1UA" 
-                            title="CareBot Demo Video" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen>
-                    </iframe>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-content">
+                    <h2 class="project-title">CareBot: Voice-Controlled Autonomous Robot-Arm Assistant</h2>
+                    <p class="project-description">Sonnet-based long horizon robot arm planner in PyBullet simulation. Inspired by <a href="https://creative-robotool.github.io/" target="_blank">RoboTool</a>.</p>
+                    <a href="https://devpost.com/software/carebot-u4qlrz" class="project-link" target="_blank">View on Devpost</a>
+                    <div class="media-container">
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/ek3yyC_W1UA" 
+                                    title="CareBot Demo Video" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="project-section">
-            <h2 class="project-title">RoboTAP: Tracking Keypoints for Peg-in-Hole</h2>
-            <p class="project-description">Application of Google Deepmind's TAPIR CNN to track keypoints for peg-in-hole tasks.</p>
-            <a href="https://docs.google.com/presentation/d/1Yvgr_fW3p-NqqDucRYV3yOQ8qIndT0Z_I-yZDluzmAI/edit?usp=sharing" 
-               class="project-link" target="_blank">Presentation & Videos</a>
-            <div class="media-container">
-                <object data="RoboTAP.pdf" type="application/pdf" class="pdf-container">
-                    <div class="pdf-fallback">
-                        <p>PDF viewer not available. <a href="RoboTAP.pdf" download>Download the report here</a>.</p>
+            <div class="project-card">
+                <div class="project-content">
+                    <h2 class="project-title">RoboTAP: Tracking Keypoints for Peg-in-Hole</h2>
+                    <p class="project-description">Application of Google Deepmind's TAPIR CNN to track keypoints for peg-in-hole tasks.</p>
+                    <a href="https://docs.google.com/presentation/d/1Yvgr_fW3p-NqqDucRYV3yOQ8qIndT0Z_I-yZDluzmAI/edit?usp=sharing" 
+                       class="project-link" target="_blank">Presentation & Videos</a>
+                    <div class="media-container">
+                        <object data="RoboTAP.pdf" type="application/pdf" class="pdf-container">
+                            <div class="pdf-fallback">
+                                <p>PDF viewer not available. <a href="RoboTAP.pdf" download>Download the report here</a>.</p>
+                            </div>
+                        </object>
                     </div>
-                </object>
-            </div>
-        </div>
-
-        <div class="project-section">
-            <h2 class="project-title">Teaching a 6DOF Manipulator Pick-in-Hole Using Diffusion EDF & Compliance Policy</h2>
-            <p class="project-description">Implementation of diffusion-based, rotation-equivariant learning for long-horizon precision tasks.</p>
-            <a href="https://sites.google.com/berkeley.edu/eecs106a-fp/home" 
-               class="project-link" target="_blank">Project Website</a>
-            <div class="media-container">
-                <div class="video-container">
-                    <iframe src="https://drive.google.com/file/d/1OvvEqXt4eu1wxqBZnWrB3Y65yFF3xGZu/preview" 
-                            title="6DOF Manipulator Demo" 
-                            allow="autoplay" 
-                            allowfullscreen>
-                    </iframe>
                 </div>
             </div>
-        </div>
 
-        <div class="project-section">
-            <h2 class="project-title">Trash Collecting Tank with 4DOF Arm</h2>
-            <p class="project-description">Autonomous mobile robot with 4-degree-of-freedom manipulator designed for environmental cleanup and waste collection tasks.</p>
-            <div class="media-container">
-                <object data="trashCollector.pdf" type="application/pdf" class="pdf-container">
-                    <div class="pdf-fallback">
-                        <p>PDF viewer not available. <a href="trashCollector.pdf" download>Download the report here</a>.</p>
+            <div class="project-card">
+                <div class="project-content">
+                    <h2 class="project-title">Teaching a 6DOF Manipulator Pick-in-Hole Using Diffusion EDF & Compliance Policy</h2>
+                    <p class="project-description">Implementation of diffusion-based, rotation-equivariant learning for long-horizon precision tasks.</p>
+                    <a href="https://sites.google.com/berkeley.edu/eecs106a-fp/home" 
+                       class="project-link" target="_blank">Project Website</a>
+                    <div class="media-container">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/1OvvEqXt4eu1wxqBZnWrB3Y65yFF3xGZu/preview" 
+                                    title="6DOF Manipulator Demo" 
+                                    allow="autoplay" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
                     </div>
-                </object>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-content">
+                    <h2 class="project-title">Trash Collecting Tank with 4DOF Arm</h2>
+                    <p class="project-description">Autonomous mobile robot with 4-degree-of-freedom manipulator designed for environmental cleanup and waste collection tasks.</p>
+                    <div class="media-container">
+                        <object data="trashCollector.pdf" type="application/pdf" class="pdf-container">
+                            <div class="pdf-fallback">
+                                <p>PDF viewer not available. <a href="trashCollector.pdf" download>Download the report here</a>.</p>
+                            </div>
+                        </object>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
