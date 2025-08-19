@@ -218,44 +218,68 @@
 
         @media (max-width: 768px) {
             .main-container {
-                padding: 10px;
-                gap: 25px;
+                flex-direction: column;
+                padding: 20px 15px;
+                gap: 30px;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .profile-section {
+                flex: none;
+                padding-right: 0;
+                margin-right: 0;
+                width: 100%;
+                border-right: none;
+            }
+
+            .projects-section {
+                flex: none;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .projects-header {
+                display: none;
             }
 
             .profile-image {
-                width: 220px;
-                height: 220px;
+                width: 200px;
+                height: 200px;
             }
 
             .profile-name h1 {
                 font-size: 2.5rem;
             }
 
-            .projects-header h2 {
-                font-size: 2rem;
-            }
-
             .project-link {
-                padding: 22px 30px;
-                font-size: 1.3rem;
+                padding: 20px 25px;
+                font-size: 1.2rem;
             }
 
             .passion-text {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+                text-align: center;
             }
 
             .social-links {
                 gap: 20px;
+                justify-content: center;
             }
 
             .icon-link {
-                width: 55px;
-                height: 55px;
+                width: 50px;
+                height: 50px;
             }
 
             .icon-link svg {
-                width: 26px;
-                height: 26px;
+                width: 24px;
+                height: 24px;
+            }
+
+            .education-text {
+                font-size: 1.1rem;
+                text-align: center;
             }
         }
 
